@@ -1,0 +1,132 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  
+  /* Theme Colors - Default values, updated dynamically */
+  /* Brand Colors */
+  --theme-primary: #4f46e5;
+  --theme-secondary: #6366f1;
+  
+  /* Background Colors */
+  --theme-background: #fcfdfe;
+  --theme-background-secondary: #f8fafc;
+  --theme-background-dark: #0f172a;
+  
+  /* Text Colors */
+  --theme-text-primary: #0f172a;
+  --theme-text-secondary: #64748b;
+  --theme-text-light: #ffffff;
+  
+  /* Border Colors */
+  --theme-border: #e2e8f0;
+  --theme-border-light: #f1f5f9;
+  
+  /* Accent Colors */
+  --theme-accent: #6366f1;
+  --theme-accent-hover: #4f46e5;
+  
+  /* Status Colors */
+  --theme-success: #10b981;
+  --theme-error: #ef4444;
+  --theme-warning: #f59e0b;
+  --theme-info: #3b82f6;
+  
+  /* Button Colors */
+  --theme-button-primary: #4f46e5;
+  --theme-button-primary-hover: #4338ca;
+  --theme-button-secondary: #6366f1;
+  --theme-button-secondary-hover: #4f46e5;
+  
+  /* Link Colors */
+  --theme-link: #4f46e5;
+  --theme-link-hover: #4338ca;
+  
+  /* Dark/Black Colors */
+  --theme-dark: #0f172a;
+  --theme-dark-hover: #1e293b;
+}
+
+/* Theme color utility classes */
+.bg-theme-primary {
+  background-color: var(--theme-primary);
+}
+
+.bg-theme-secondary {
+  background-color: var(--theme-secondary);
+}
+
+.text-theme-primary {
+  color: var(--theme-primary);
+}
+
+.text-theme-secondary {
+  color: var(--theme-secondary);
+}
+
+.border-theme-primary {
+  border-color: var(--theme-primary);
+}
+
+.border-theme-secondary {
+  border-color: var(--theme-secondary);
+}
+
+.hover\:bg-theme-primary:hover {
+  background-color: var(--theme-primary);
+}
+
+.hover\:bg-theme-secondary:hover {
+  background-color: var(--theme-secondary);
+}
+
+.hover\:text-theme-primary:hover {
+  color: var(--theme-primary);
+}
+
+.hover\:text-theme-secondary:hover {
+  color: var(--theme-secondary);
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+/* Custom Scrollbar for Admin Dashboard */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 20px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #94a3b8;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-out forwards;
+}
