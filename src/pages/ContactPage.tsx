@@ -1,19 +1,40 @@
-
 import React, { useState } from 'react';
 import { MapPin, Phone, Mail, Send } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
+import { createContactEnquiry } from '../api/contactApi';
 
 const ContactPage: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    subject: '',
+    message: ''
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+
+    try {
+      await createContactEnquiry(formData);
+      toast.success('Your message has been sent successfully!');
       navigate('/success');
-    }, 1500);
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'Failed to send message. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -38,7 +59,7 @@ const ContactPage: React.FC = () => {
                 </div>
                 <div className="space-y-1">
                   <h4 className="font-black text-slate-900">Office Address</h4>
-                  <p className="text-slate-500 font-medium">Shivaji Nagar, Nanded,<br />Maharashtra 431602</p>
+                  <p className="text-slate-500 font-medium">Near New Mondha, VIP Road, Nanded,<br />Maharashtra 431602</p>
                 </div>
               </div>
               <div className="flex gap-6 items-start">
@@ -47,7 +68,7 @@ const ContactPage: React.FC = () => {
                 </div>
                 <div className="space-y-1">
                   <h4 className="font-black text-slate-900">Phone</h4>
-                  <p className="text-slate-500 font-medium">+91 98765 43210</p>
+                  <p className="text-slate-500 font-medium">+91 7385650510</p>
                   <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Available 24/7</p>
                 </div>
               </div>
@@ -57,7 +78,7 @@ const ContactPage: React.FC = () => {
                 </div>
                 <div className="space-y-1">
                   <h4 className="font-black text-slate-900">Email</h4>
-                  <p className="text-slate-500 font-medium">help@antarcservices.in</p>
+                  <p className="text-slate-500 font-medium">antarcservices@gmail.com</p>
                 </div>
               </div>
             </div>
@@ -70,20 +91,62 @@ const ContactPage: React.FC = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Full Name</label>
-                    <input required className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:bg-white focus:ring-4 focus:ring-indigo-100 outline-none transition-all font-bold" placeholder="Your name" />
+                    <input
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      required
+                      className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:bg-white focus:ring-4 focus:ring-indigo-100 outline-none transition-all font-bold"
+                      placeholder="Your name"
+                    />
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Mobile Number</label>
-                    <input required type="tel" className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:bg-white focus:ring-4 focus:ring-indigo-100 outline-none transition-all font-bold" placeholder="+91 00000 00000" />
+                    <input
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      required
+                      type="tel"
+                      className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:bg-white focus:ring-4 focus:ring-indigo-100 outline-none transition-all font-bold"
+                      placeholder="+91 00000 00000"
+                    />
                   </div>
                 </div>
                 <div className="space-y-2">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Email Address</label>
+                  <input
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                    type="email"
+                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:bg-white focus:ring-4 focus:ring-indigo-100 outline-none transition-all font-bold"
+                    placeholder="your.email@example.com"
+                  />
+                </div>
+                <div className="space-y-2">
                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Subject</label>
-                  <input required className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:bg-white focus:ring-4 focus:ring-indigo-100 outline-none transition-all font-bold" placeholder="How can we help?" />
+                  <input
+                    name="subject"
+                    value={formData.subject}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:bg-white focus:ring-4 focus:ring-indigo-100 outline-none transition-all font-bold"
+                    placeholder="How can we help?"
+                  />
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Message</label>
-                  <textarea required rows={4} className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:bg-white focus:ring-4 focus:ring-indigo-100 outline-none transition-all font-bold resize-none" placeholder="Details of your appliance issue..."></textarea>
+                  <textarea
+                    name="message"
+                    value={formData.message}
+                    onChange={handleChange}
+                    required
+                    rows={4}
+                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:bg-white focus:ring-4 focus:ring-indigo-100 outline-none transition-all font-bold resize-none"
+                    placeholder="Details of your appliance issue..."
+                  ></textarea>
                 </div>
                 <button type="submit" disabled={loading} className="w-full py-5 bg-slate-900 hover:bg-indigo-600 text-white font-black rounded-2xl transition-all shadow-xl flex items-center justify-center gap-3">
                   {loading ? 'Sending...' : 'Send Enquiry'}
@@ -92,6 +155,23 @@ const ContactPage: React.FC = () => {
               </form>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Map Section */}
+      <section className="w-full">
+        <div className="w-full h-[300px] sm:h-[400px] lg:h-[500px] bg-slate-100 relative">
+          <iframe
+            width="100%"
+            height="100%"
+            style={{ border: 0 }}
+            loading="lazy"
+            allowFullScreen
+            referrerPolicy="no-referrer-when-downgrade"
+            src="https://maps.google.com/maps?q=Antarc+Services+Nanded&t=&z=15&ie=UTF8&iwloc=&output=embed"
+            title="Antarc Services Location"
+            className="w-full h-full grayscale hover:grayscale-0 transition-all duration-700"
+          ></iframe>
         </div>
       </section>
     </div>

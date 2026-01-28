@@ -1,7 +1,8 @@
 import axios from 'axios';
 
-const API = axios.create({
-  baseURL: 'https://anterc-backend.vercel.app/api', // Backend is running on port 7070
+  const API = axios.create({
+  //   baseURL: 'http://localhost:7070/api', 
+  baseURL: 'https://anterc-backend.vercel.app/api',
 });
 
 // Add a request interceptor to attach the token

@@ -139,7 +139,7 @@ export const MOCK_ENQUIRIES = [
     status: 'Technician Assigned',
     brand: 'Voltas',
     date: '24 May, 2024',
-    location: 'Shivaji Nagar, Nanded'
+    location: 'Near New Mondha, VIP Road, Nanded'
   },
   {
     id: 'EC-55102-REQ',

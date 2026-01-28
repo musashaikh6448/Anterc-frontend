@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ChevronLeft, ArrowRight, Star, HelpCircle, BadgeCheck, ChevronDown, Clock, CheckCircle2 } from 'lucide-react';
+import { ChevronLeft, ArrowRight, Star, HelpCircle, BadgeCheck, ChevronDown,  CheckCircle2 } from 'lucide-react';
 import ImageWithSkeleton from '../components/ImageWithSkeleton';
 import { getServicesByCategory } from '@/api/serviceApi';
 
@@ -185,9 +185,7 @@ const CategoryDetailsPage: React.FC = () => {
                     </div>
                     
                     <div className="mt-8 flex items-center justify-between border-t border-slate-50 pt-6">
-                      <div className="flex items-center gap-2 text-slate-400 font-black text-[10px] uppercase tracking-widest">
-                        <Clock size={14} /> {service.estimatedTime}
-                      </div>
+                     
                       <Link 
                         to={`/enquiry/${category.id}/${service.id}`}
                         onClick={(e) => {

@@ -19,11 +19,12 @@ const Footer: React.FC = () => {
               Nanded's top-rated doorstep service for AC and household appliances. Professional work, transparent pricing, 24/7 support.
             </p>
             <div className="flex justify-start gap-5">
-              <Facebook size={18} className="hover:text-indigo-400 transition-colors cursor-pointer" />
-              <Instagram size={18} className="hover:text-indigo-400 transition-colors cursor-pointer" />
+              <a href="https://www.instagram.com/antarcservices/" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-indigo-400 transition-colors">
+                <Instagram size={18} />
+              </a>
             </div>
           </div>
-          
+
           <div className="text-left">
             <h4 className="text-white font-black text-xs uppercase tracking-[0.2em] mb-8">Useful Links</h4>
             <ul className="space-y-4 text-sm font-bold">
@@ -52,20 +53,20 @@ const Footer: React.FC = () => {
             <ul className="space-y-6 text-sm font-bold">
               <li className="flex flex-row items-center gap-3 justify-start">
                 <Phone size={18} className="text-indigo-400" />
-                <span>+91 98765 43210</span>
+                <span>+91 7385650510</span>
               </li>
               <li className="flex flex-row items-center gap-3 justify-start">
                 <Mail size={18} className="text-indigo-400" />
-                <span>help@antarcservices.in</span>
+                <span>antarcservices@gmail.com</span>
               </li>
               <li className="flex flex-row items-center gap-3 justify-start">
                 <MapPin size={18} className="text-indigo-400" />
-                <span className="text-left">Shivaji Nagar, Nanded</span>
+                <span className="text-left">Near New Mondha, VIP Road, Nanded</span>
               </li>
             </ul>
           </div>
         </div>
-        
+
         <div className="border-t border-slate-800/60 mt-20 pt-10 text-center">
           <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
             © {new Date().getFullYear()} Antarc Services Nanded. Trusted Professional Service.

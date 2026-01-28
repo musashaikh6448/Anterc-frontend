@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import BannerCarousel from '../components/BannerCarousel';
 import CategoryCard from '../components/CategoryCard';
@@ -15,6 +14,37 @@ const HomePage: React.FC = () => {
   useEffect(() => {
     fetchServices();
   }, []);
+
+  // Define priority order for categories (most used to least used)
+  const getCategoryPriority = (categoryName: string): number => {
+    const priorityOrder: Record<string, number> = {
+      // High priority - Most commonly used appliances (AC comes first)
+      'Air Conditioner': 1,
+      'Washing Machine': 2,
+      'Refrigerator': 3,
+      'Microwave oven': 4,
+      'Water Purifier': 5,
+      
+      // Medium priority - Frequently used appliances
+      'Ceiling & Table Fan': 6,
+      'Air Cooler': 7,
+      'Water Cooler': 8,
+      'Visi Cooler': 9,
+      'Electric Induction': 10,
+      
+      // Low priority - Less frequently used appliances
+      'CCTV Camera': 11,
+      'Computer & Laptop': 12,
+      'Home theatre/ Sound box': 13,
+      'Inverter Batteries': 14,
+      'Vacuum cleaner': 15,
+      'Deep Freezer': 16,
+      'Air Purifier': 17,
+    };
+    
+    // Return priority if found, otherwise assign a very high number for new/unlisted categories
+    return priorityOrder[categoryName] || 999;
+  };
 
   const fetchServices = async () => {
     try {
@@ -43,6 +73,7 @@ const HomePage: React.FC = () => {
           'Vacuum cleaner': 'vacuum-cleaner',
           'Washing Machine': 'washing-machine',
           'Deep Freezer': 'deep-freezer',
+          'Refrigerator': 'refrigerator', // Added refrigerator mapping
         };
         return mapping[name] || name.toLowerCase().replace(/\s+/g, '-').replace(/[&/]/g, '-');
       };
@@ -73,7 +104,15 @@ const HomePage: React.FC = () => {
         category.services.push(...transformedServices);
       });
       
-      setCategories(Array.from(categoryMap.values()));
+      // Convert Map to array and sort by priority
+      const categoriesArray = Array.from(categoryMap.values());
+      const sortedCategories = categoriesArray.sort((a, b) => {
+        const priorityA = getCategoryPriority(a.title);
+        const priorityB = getCategoryPriority(b.title);
+        return priorityA - priorityB; // Lower number = higher priority
+      });
+      
+      setCategories(sortedCategories);
     } catch (error) {
       console.error('Failed to load services:', error);
       // Fallback to empty array

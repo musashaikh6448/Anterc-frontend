@@ -44,7 +44,7 @@ const GalleryPage: React.FC = () => {
         ) : images.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {images.map((image) => (
-              <div key={image._id} className="group overflow-hidden rounded-[2.5rem] bg-slate-100 aspect-[4/5] shadow-lg border border-slate-100">
+              <div key={image._id} className="group overflow-hidden rounded-[2.5rem] bg-slate-100  shadow-lg border border-slate-100">
                 <ImageWithSkeleton 
                   src={image.imageUrl} 
                   alt={image.title || `Gallery image ${image._id}`} 

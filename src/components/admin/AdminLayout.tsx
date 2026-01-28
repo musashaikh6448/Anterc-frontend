@@ -9,7 +9,8 @@ import {
   LogOut,
   Menu,
   X,
-  Sparkles
+  Sparkles,
+  Mail
 } from 'lucide-react';
 import { useAuth } from '../../AuthContext';
 import { toast } from 'sonner';
@@ -32,7 +33,8 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
 
   const menuItems = [
     { icon: LayoutDashboard, label: 'Dashboard', path: '/admin/dashboard' },
-    { icon: MessageSquare, label: 'Enquiries', path: '/admin/enquiries' },
+    { icon: MessageSquare, label: 'Service Enquiries', path: '/admin/enquiries' },
+    { icon: Mail, label: 'Contact Messages', path: '/admin/contact-enquiries' },
     { icon: Users, label: 'Customers', path: '/admin/customers' },
     { icon: UserCog, label: 'Admins', path: '/admin/admins' },
     { icon: Sparkles, label: 'Services', path: '/admin/services' },
@@ -53,9 +55,8 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
 
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 w-72 bg-white border-r border-slate-100 flex flex-col z-50 transform transition-transform duration-300 ease-in-out ${
-          sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
-        }`}
+        className={`fixed inset-y-0 left-0 w-72 bg-white border-r border-slate-100 flex flex-col z-50 transform transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+          }`}
       >
         {/* Sidebar Header */}
         <div className="p-6 border-b border-slate-100">
@@ -85,17 +86,15 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                   navigate(item.path);
                   setSidebarOpen(false);
                 }}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl font-bold text-sm transition-all duration-500 group ${
-                  active
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl font-bold text-sm transition-all duration-500 group ${active
                     ? 'bg-slate-900 text-white shadow-xl'
                     : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
-                }`}
+                  }`}
               >
-                <div className={`p-2 rounded-xl transition-all ${
-                  active 
-                    ? 'bg-white/10' 
+                <div className={`p-2 rounded-xl transition-all ${active
+                    ? 'bg-white/10'
                     : 'bg-slate-50 group-hover:bg-indigo-50 group-hover:text-indigo-600'
-                }`}>
+                  }`}>
                   <Icon size={18} strokeWidth={2.5} />
                 </div>
                 {item.label}

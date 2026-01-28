@@ -9,6 +9,8 @@ import AdminsPage from './admin/AdminsPage';
 import ServicesPage from './admin/ServicesPage';
 import ThemePage from './admin/ThemePage';
 
+import ContactEnquiriesPage from './admin/ContactEnquiriesPage';
+
 const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -19,7 +21,7 @@ const AdminDashboard: React.FC = () => {
       navigate('/admin/login');
       return;
     }
-    
+
     // Redirect /admin to /admin/dashboard
     if (location.pathname === '/admin' || location.pathname === '/admin/') {
       navigate('/admin/dashboard', { replace: true });
@@ -33,6 +35,7 @@ const AdminDashboard: React.FC = () => {
   // Render appropriate page based on path
   const renderPage = () => {
     const path = location.pathname;
+    if (path.includes('/contact-enquiries')) return <ContactEnquiriesPage />;
     if (path.includes('/enquiries')) return <EnquiriesPage />;
     if (path.includes('/customers')) return <CustomersPage />;
     if (path.includes('/admins')) return <AdminsPage />;
