@@ -22,7 +22,7 @@ import NavigationLoader from './components/NavigationLoader';
 
 const AnimatedRoutes = () => {
   const location = useLocation();
-  
+
   return (
     <div key={location.pathname} className="page-transition-enter w-full">
       <Routes location={location}>
@@ -54,37 +54,37 @@ const AppLayoutContent = () => {
     <div className="flex flex-col min-h-screen relative bg-[#fcfdfe] max-w-[100vw] overflow-x-hidden">
       <NavigationLoader />
       {!isAdminPath && <Header />}
-      
+
       <main className={`flex-grow flex flex-col items-center ${!isAdminPath ? 'pt-16 sm:pt-24' : ''}`}>
         <div className="w-full max-w-[2000px] mx-auto">
           <AnimatedRoutes />
         </div>
       </main>
-      
+
       {!isAdminPath && <Footer />}
-      
+
       {/* Mobile Floating Action Button - Only for users, not admin */}
       <Routes>
-         <Route path="/admin/*" element={null} />
-         <Route path="*" element={
-           <div className="fixed bottom-6 right-6 md:hidden z-40">
-             <a 
-               href="tel:+919876543210"
-               className="text-white w-14 h-14 rounded-2xl shadow-2xl flex items-center justify-center transition-all border border-white/10"
-               style={{ backgroundColor: theme?.colors?.dark || '#0f172a' }}
-               onMouseEnter={(e) => {
-                 e.currentTarget.style.backgroundColor = theme?.colors?.darkHover || theme?.colors?.primary || '#1e293b';
-               }}
-               onMouseLeave={(e) => {
-                 e.currentTarget.style.backgroundColor = theme?.colors?.dark || '#0f172a';
-               }}
-             >
-               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                 <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-               </svg>
-             </a>
-           </div>
-         } />
+        <Route path="/admin/*" element={null} />
+        <Route path="*" element={
+          <div className="fixed bottom-6 right-6 md:hidden z-40">
+            <a
+              href="tel:+917385650510"
+              className="text-white w-14 h-14 rounded-2xl shadow-2xl flex items-center justify-center transition-all border border-white/10"
+              style={{ backgroundColor: theme?.colors?.dark || '#0f172a' }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = theme?.colors?.darkHover || theme?.colors?.primary || '#1e293b';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = theme?.colors?.dark || '#0f172a';
+              }}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+              </svg>
+            </a>
+          </div>
+        } />
       </Routes>
     </div>
   );
