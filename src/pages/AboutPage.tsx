@@ -30,7 +30,7 @@ const AboutPage: React.FC = () => {
             <div className="space-y-4">
               <h2 className="text-3xl font-black text-slate-900 tracking-tight">Our Mission</h2>
               <p className="text-slate-600 text-lg leading-relaxed">
-                Founded in Nanded, Antarc Services was born out of a simple need: reliable, transparent, and quick home appliance services. We understand that a malfunctioning AC or Fridge can disrupt your entire day, which is why we've built a team of background-verified experts available 24/7.
+                Founded in Nanded, Antarc Services was born out of a simple need: reliable, transparent, and quick home appliance services. We understand that a malfunctioning AC or Fridge can disrupt your entire day, which is why we've built a team of background-verified experts available.
               </p>
               <p className="text-slate-600 text-lg leading-relaxed">
                 Whether it's a routine service or a major breakdown, we use only 100% genuine spare parts and provide a transparent pricing structure before we start any work.
