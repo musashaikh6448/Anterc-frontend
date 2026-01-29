@@ -144,7 +144,6 @@ const HomePage: React.FC = () => {
         <div className="grid grid-cols-4 gap-1.5 sm:gap-8">
           {[
             { icon: <ShieldCheck />, title: "Certified Pro", sub: "Nanded Verified" },
-            { icon: <Clock />, title: "24/7 Support", sub: "Emergency Repairs" },
             { icon: <Phone />, title: "Call Anytime", sub: "Instant Response" },
             { icon: <Award />, title: "Genuine Parts", sub: "90-Day Warranty" }
           ].map((item, idx) => (
