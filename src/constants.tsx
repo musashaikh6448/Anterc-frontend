@@ -97,7 +97,7 @@ export const GALLERY_IMAGES = [
 export const BANNERS = [
   {
     id: 1,
-    title: "24/7 Professional AC Care",
+    title: "Professional AC Care",
     subtitle: "Emergency Repairs & Expert Maintenance at Your Doorstep in Nanded",
     image: "https://images.unsplash.com/photo-1591123120675-6f7f1aae0e5b?auto=format&fit=crop&q=100&w=1600"
   },
