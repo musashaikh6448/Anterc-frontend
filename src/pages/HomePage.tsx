@@ -233,7 +233,7 @@ const HomePage: React.FC = () => {
               Facing an <span style={{ color: theme?.colors?.secondary || '#6366f1' }}>Emergency</span> Repair?
             </h2>
             <p className="text-slate-400 text-base sm:text-xl lg:text-2xl font-medium max-w-2xl mx-auto leading-relaxed">
-              Call us now or send a WhatsApp message for 24/7 doorstep service in Nanded.
+              Call us now or send a WhatsApp message for doorstep service in Nanded.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center pt-6 sm:pt-10">
               <a
