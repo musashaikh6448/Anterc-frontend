@@ -141,7 +141,7 @@ const HomePage: React.FC = () => {
 
       {/* Trust Badges */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-20 md:py-24">
-        <div className="grid grid-cols-4 gap-1.5 sm:gap-8">
+        <div className="grid grid-cols-3 gap-1.5 sm:gap-8">
           {[
             { icon: <ShieldCheck />, title: "Certified Pro", sub: "Nanded Verified" },
             { icon: <Phone />, title: "Call Anytime", sub: "Instant Response" },
@@ -195,7 +195,7 @@ const HomePage: React.FC = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-5 gap-y-10 sm:gap-x-10 sm:gap-y-16">
+        <div className="grid grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-x-5 gap-y-10 sm:gap-x-10 sm:gap-y-16">
           {categories.length > 0 ? (
             categories.map((category, idx) => (
               <div key={category.id} className="animate-fade-in flex justify-center">

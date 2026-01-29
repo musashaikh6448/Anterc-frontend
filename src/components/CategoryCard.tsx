@@ -51,13 +51,13 @@ const CategoryCard: React.FC<CategoryCardProps> = ({ category }) => {
 
       {/* Label section below card (Standard layout for Category grids) */}
       <div className="mt-4 sm:mt-6 text-center sm:text-left space-y-1 transition-transform duration-500 group-hover:translate-x-1">
-        <h3 className="font-black text-slate-900 text-base sm:text-lg tracking-tight group-hover:text-indigo-600 transition-colors">
+        <h3 className="font-black text-slate-900 text-[15px] tracking-tight group-hover:text-indigo-600 transition-colors">
           {category.title}
         </h3>
         <div className="flex items-center justify-center sm:justify-start gap-2">
            <span className="w-1 h-1 rounded-full bg-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity"></span>
-           <p className="text-[10px] sm:text-[11px] text-slate-400 font-bold uppercase tracking-widest group-hover:text-slate-500 transition-colors">
-            {category.services.length} Premium Services
+           <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest group-hover:text-slate-500 transition-colors">
+            {category.services.length} Services
           </p>
         </div>
       </div>
