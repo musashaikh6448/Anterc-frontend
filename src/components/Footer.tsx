@@ -19,7 +19,7 @@ const Footer: React.FC = () => {
               </h3>
             </Link>
             <p className="text-sm text-slate-400 leading-relaxed max-w-xs">
-              Nanded's top-rated doorstep service for AC and household appliances. Professional work, transparent pricing, 24/7 support.
+              Nanded's top-rated doorstep service for AC and household appliances. Professional work, transparent pricing support.
             </p>
             <div className="flex justify-start gap-5">
               <a
