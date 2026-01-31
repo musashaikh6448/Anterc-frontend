@@ -154,7 +154,7 @@ const HomePage: React.FC = () => {
               <div className="w-8 h-8 sm:w-14 sm:h-14 bg-slate-50 rounded-lg sm:rounded-2xl flex items-center justify-center text-slate-400 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-500">
                 <div className="sm:hidden">
                   {React.cloneElement(item.icon as React.ReactElement<any>, {
-                    size: 14,
+                    size: 20,
                     strokeWidth: 2.5
                   })}
                 </div>
@@ -166,10 +166,10 @@ const HomePage: React.FC = () => {
                 </div>
               </div>
               <div className="space-y-0.5 sm:space-y-1 w-full">
-                <h4 className="font-black text-slate-900 tracking-tight text-[9px] sm:text-base leading-tight truncate w-full">
+                <h4 className="font-black text-slate-900 tracking-tight text-[12px] sm:text-base leading-tight truncate w-full">
                   {item.title}
                 </h4>
-                <p className="text-[7px] sm:text-[11px] text-slate-400 font-bold uppercase tracking-widest truncate w-full">
+                <p className="text-[7px] text-slate-400 font-bold uppercase tracking-widest truncate w-full">
                   {item.sub}
                 </p>
               </div>

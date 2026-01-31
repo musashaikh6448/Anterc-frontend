@@ -7,7 +7,8 @@ import {
   AlertCircle,
   Package,
   Smartphone,
-  MessageSquare
+  MessageSquare,
+  MapPin
 } from 'lucide-react';
 import { useAuth } from '../AuthContext';
 import { getMyEnquiries } from '@/api/customerApi';
@@ -142,7 +143,7 @@ const MyEnquiriesPage: React.FC = () => {
                     <div className="flex items-center gap-2">
                       <Smartphone size={14} className="text-slate-400" />
                       <span className="text-xs font-bold text-slate-500">
-                        {enquiry.applianceType}
+                        {enquiry.applianceType} {enquiry.brand && <span className="font-normal text-slate-400">({enquiry.brand})</span>}
                       </span>
                     </div>
 
@@ -152,6 +153,19 @@ const MyEnquiriesPage: React.FC = () => {
                         {new Date(enquiry.createdAt).toLocaleDateString()}
                       </span>
                     </div>
+
+                    {(enquiry.city || enquiry.address) && (
+                      <div className="flex items-start gap-2 max-w-[50%]">
+                        <MapPin size={14} className="text-slate-400 mt-0.5 shrink-0" />
+                        <div className="flex flex-col">
+                          <span className="text-xs font-bold text-slate-500">
+                            {enquiry.city}{enquiry.state ? `, ${enquiry.state}` : ''} {enquiry.pincode && `- ${enquiry.pincode}`}
+                          </span>
+                          {enquiry.address && <span className="text-[10px] text-slate-400 leading-tight mt-0.5">{enquiry.address}</span>}
+                          {enquiry.landmark && <span className="text-[10px] text-indigo-500 font-medium mt-0.5">Near {enquiry.landmark}</span>}
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   {/* MESSAGE */}

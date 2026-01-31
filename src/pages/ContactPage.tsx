@@ -80,7 +80,6 @@ const ContactPage: React.FC = () => {
                 <div className="space-y-1">
                   <h4 className="font-black text-slate-900">Phone</h4>
                   <p className="text-slate-500 font-medium">+91 7385650510</p>
-                  <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Available 24/7</p>
                 </div>
               </div>
               <div className="flex gap-6 items-start">

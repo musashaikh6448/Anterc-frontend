@@ -27,12 +27,18 @@ export interface User {
 export interface EnquiryFormData {
   fullName: string;
   mobile: string;
-  location: string;
+  location?: string; // Kept for backward compatibility
+  address: string;
+  landmark: string;
+  city: string;
+  state: string;
+  pincode: string;
   brand: string;
   issue: string;
   email?: string;
   subject?: string;
   message?: string;
+
 }
 
 export interface BookingFormData {

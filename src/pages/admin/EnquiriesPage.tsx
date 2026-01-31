@@ -48,7 +48,7 @@ const EnquiriesPage: React.FC = () => {
 
   const handleDeleteConfirm = async () => {
     if (!deletingEnquiry) return;
-    
+
     try {
       await deleteEnquiry(deletingEnquiry._id);
       toast.success('Enquiry deleted successfully');
@@ -204,6 +204,12 @@ const EnquiriesPage: React.FC = () => {
                   Appliance
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-black text-slate-500 uppercase tracking-widest">
+                  Brand
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-black text-slate-500 uppercase tracking-widest">
+                  Location
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-black text-slate-500 uppercase tracking-widest">
                   Message
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-black text-slate-500 uppercase tracking-widest">
@@ -233,6 +239,13 @@ const EnquiriesPage: React.FC = () => {
                   </td>
                   <td className="px-4 py-3 text-sm font-bold text-slate-900">{enquiry.serviceType}</td>
                   <td className="px-4 py-3 text-sm text-slate-600">{enquiry.applianceType}</td>
+                  <td className="px-4 py-3 text-sm text-slate-600">{enquiry.brand || '-'}</td>
+                  <td className="px-4 py-3">
+                    <div className="text-sm font-bold text-slate-900">{enquiry.city}</div>
+                    <div className="text-xs text-slate-500">{enquiry.pincode}</div>
+                    <div className="text-[10px] text-slate-400 truncate max-w-[150px]" title={enquiry.address}>{enquiry.address}</div>
+                    {enquiry.landmark && <div className="text-[10px] text-indigo-500 font-medium truncate max-w-[150px]">Near {enquiry.landmark}</div>}
+                  </td>
                   <td className="px-4 py-3 text-sm text-slate-600 max-w-xs truncate" title={enquiry.message}>
                     {enquiry.message}
                   </td>
@@ -301,7 +314,13 @@ const EnquiriesPage: React.FC = () => {
               </div>
               <div>
                 <div className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Appliance</div>
-                <div className="text-sm text-slate-600">{enquiry.applianceType}</div>
+                <div className="text-sm text-slate-600">{enquiry.applianceType} {enquiry.brand && <span className="text-slate-400">({enquiry.brand})</span>}</div>
+              </div>
+              <div>
+                <div className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Location</div>
+                <div className="text-sm font-bold text-slate-900">{enquiry.city}, {enquiry.state} - {enquiry.pincode}</div>
+                <div className="text-xs text-slate-500 mt-1">{enquiry.address}</div>
+                {enquiry.landmark && <div className="text-xs text-indigo-500 font-medium mt-0.5">Near {enquiry.landmark}</div>}
               </div>
               <div>
                 <div className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Message</div>

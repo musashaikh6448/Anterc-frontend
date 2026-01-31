@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { ChevronLeft, User, Smartphone, MapPin, Info, Send, CheckCircle2, ShieldCheck, BadgeCheck } from 'lucide-react';
+import { ChevronLeft, User, Smartphone, MapPin, Info, Send, CheckCircle2, ShieldCheck, BadgeCheck, Map } from 'lucide-react';
 import { EnquiryFormData } from '../types';
+import { cities, CityData } from '@/data/indianCities';
 import { useAuth } from '../AuthContext';
 import { toast } from 'sonner';
 import { createEnquiry } from '@/api/customerApi';
@@ -20,22 +21,30 @@ const EnquiryPage: React.FC = () => {
   const [formData, setFormData] = useState<EnquiryFormData>({
     fullName: user?.name || '',
     mobile: user?.phone || '',
-    location: '',
+    address: '',
+    landmark: '',
+    city: '',
+    state: '',
+    pincode: '',
     brand: '',
     issue: '',
   });
+
+  const [cityQuery, setCityQuery] = useState('');
+  const [showCitySuggestions, setShowCitySuggestions] = useState(false);
+  const [filteredCities, setFilteredCities] = useState<CityData[]>([]);
 
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    
+
     // Check if user is logged in, if not redirect to login
     if (!user) {
       navigate('/auth', { state: { returnTo: `/enquiry/${categoryId}/${serviceId}` } });
       return;
     }
-    
+
     fetchService();
   }, [categoryId, serviceId, user, navigate]);
 
@@ -50,8 +59,12 @@ const EnquiryPage: React.FC = () => {
             ...prev,
             fullName: data.name || prev.fullName,
             mobile: data.phone || prev.mobile,
-            location: data.address || prev.location,
+            address: data.address || prev.address,
+            city: data.city || prev.city,
+            state: data.state || prev.state,
+            pincode: data.pincode || prev.pincode,
           }));
+          if (data.city) setCityQuery(data.city);
         } catch (error) {
           // Fallback to basic user data
           setFormData(prev => ({
@@ -143,6 +156,63 @@ const EnquiryPage: React.FC = () => {
     }
   };
 
+  const handleCityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value;
+    setCityQuery(query);
+    setFormData(prev => ({ ...prev, city: query }));
+
+    if (query.length > 0) {
+      const filtered = cities.filter(city =>
+        city.city.toLowerCase().includes(query.toLowerCase())
+      );
+      setFilteredCities(filtered);
+      setShowCitySuggestions(true);
+    } else {
+      setShowCitySuggestions(false);
+    }
+  };
+
+  const selectCity = (cityData: CityData) => {
+    setCityQuery(cityData.city);
+    setFormData(prev => ({
+      ...prev,
+      city: cityData.city,
+      state: cityData.state,
+      pincode: cityData.pincode
+    }));
+    setShowCitySuggestions(false);
+  };
+
+  const handlePincodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const pincode = e.target.value;
+    // Only allow numbers
+    if (pincode && !/^\d*$/.test(pincode)) return;
+
+    setFormData(prev => ({ ...prev, pincode }));
+
+    // If pincode is 6 digits, try to find the city
+    if (pincode.length === 6) {
+      const foundCity = cities.find(c => c.pincode === pincode);
+      if (foundCity) {
+        setFormData(prev => ({
+          ...prev,
+          city: foundCity.city,
+          state: foundCity.state,
+          cityQuery: foundCity.city
+        }));
+        setCityQuery(foundCity.city);
+        toast.success(`Location matched: ${foundCity.city}, ${foundCity.state}`);
+      }
+    }
+  };
+
+  // Close suggestions when clicking outside
+  useEffect(() => {
+    const handleClickOutside = () => setShowCitySuggestions(false);
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -158,14 +228,12 @@ const EnquiryPage: React.FC = () => {
       await createEnquiry({
         serviceType: service?.name || 'Service',
         applianceType: category?.title || 'Appliance',
-        message: `
-          Location: ${formData.location}
-          Brand: ${formData.brand}
-          Issue: ${formData.issue}
-          Contact: ${formData.fullName} (${formData.mobile})
-        `,
-        address: formData.location,
-        city: '', // Can be added to form if needed
+        message: formData.issue,
+        address: formData.address,
+        landmark: formData.landmark,
+        city: formData.city,
+        state: formData.state,
+        pincode: formData.pincode,
         brand: formData.brand
       });
       toast.success('Enquiry sent successfully!');
@@ -265,18 +333,96 @@ const EnquiryPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="group space-y-2 sm:space-y-3">
-                <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] group-focus-within:text-indigo-600 transition-colors">
-                  <MapPin size={14} strokeWidth={2.5} /> Address
-                </label>
-                <input
-                  required
-                  name="location"
-                  value={formData.location}
-                  onChange={handleChange}
-                  placeholder="Street, Building, Landmark"
-                  className="w-full px-5 sm:px-8 py-4 sm:py-5 bg-slate-50 border border-slate-100 rounded-xl sm:rounded-2xl focus:bg-white focus:ring-4 focus:ring-indigo-100/50 focus:border-indigo-500 focus:outline-none text-sm sm:text-base font-bold transition-all placeholder:text-slate-300"
-                />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-8">
+                <div className="group space-y-2 sm:space-y-3">
+                  <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] group-focus-within:text-indigo-600 transition-colors">
+                    <MapPin size={14} strokeWidth={2.5} /> Address
+                  </label>
+                  <input
+                    required
+                    name="address"
+                    value={formData.address}
+                    onChange={handleChange}
+                    placeholder="Street, Building, Flat No."
+                    className="w-full px-5 sm:px-8 py-4 sm:py-5 bg-slate-50 border border-slate-100 rounded-xl sm:rounded-2xl focus:bg-white focus:ring-4 focus:ring-indigo-100/50 focus:border-indigo-500 focus:outline-none text-sm sm:text-base font-bold transition-all placeholder:text-slate-300"
+                  />
+                </div>
+
+                <div className="group space-y-2 sm:space-y-3">
+                  <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] group-focus-within:text-indigo-600 transition-colors">
+                    <MapPin size={14} strokeWidth={2.5} /> Landmark
+                  </label>
+                  <input
+                    name="landmark"
+                    value={formData.landmark}
+                    onChange={handleChange}
+                    placeholder="Near..."
+                    className="w-full px-5 sm:px-8 py-4 sm:py-5 bg-slate-50 border border-slate-100 rounded-xl sm:rounded-2xl focus:bg-white focus:ring-4 focus:ring-indigo-100/50 focus:border-indigo-500 focus:outline-none text-sm sm:text-base font-bold transition-all placeholder:text-slate-300"
+                  />
+                </div>
+
+                <div className="group space-y-2 sm:space-y-3 relative" onClick={(e) => e.stopPropagation()}>
+                  <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] group-focus-within:text-indigo-600 transition-colors">
+                    <Map size={14} strokeWidth={2.5} /> City
+                  </label>
+                  <div className="relative">
+                    <input
+                      required
+                      name="city"
+                      value={cityQuery}
+                      onChange={handleCityChange}
+                      onFocus={() => {
+                        if (cityQuery.length > 0) setShowCitySuggestions(true);
+                      }}
+                      placeholder="Start typing city..."
+                      className="w-full px-5 sm:px-8 py-4 sm:py-5 bg-slate-50 border border-slate-100 rounded-xl sm:rounded-2xl focus:bg-white focus:ring-4 focus:ring-indigo-100/50 focus:border-indigo-500 focus:outline-none text-sm sm:text-base font-bold transition-all placeholder:text-slate-300"
+                      autoComplete="off"
+                    />
+
+                    {showCitySuggestions && filteredCities.length > 0 && (
+                      <div className="absolute z-50 left-0 right-0 top-full mt-2 max-h-60 overflow-y-auto bg-white border border-slate-100 rounded-xl shadow-xl">
+                        {filteredCities.map((city, index) => (
+                          <button
+                            key={`${city.city}-${index}`}
+                            type="button"
+                            onClick={() => selectCity(city)}
+                            className="w-full text-left px-5 py-3 hover:bg-indigo-50 transition-colors text-sm font-medium text-slate-700 hover:text-indigo-700 flex justify-between items-center"
+                          >
+                            <span>{city.city}</span>
+                            <span className="text-xs text-slate-400">{city.state}</span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="group space-y-2 sm:space-y-3">
+                  <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] group-focus-within:text-indigo-600 transition-colors">
+                    State
+                  </label>
+                  <input
+                    name="state"
+                    value={formData.state}
+                    onChange={handleChange}
+                    placeholder="State"
+                    className="w-full px-5 sm:px-8 py-4 sm:py-5 bg-slate-50 border border-slate-100 rounded-xl sm:rounded-2xl focus:bg-white focus:ring-4 focus:ring-indigo-100/50 focus:border-indigo-500 focus:outline-none text-sm sm:text-base font-bold transition-all placeholder:text-slate-300"
+                  />
+                </div>
+
+                <div className="group space-y-2 sm:space-y-3">
+                  <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] group-focus-within:text-indigo-600 transition-colors">
+                    Pincode
+                  </label>
+                  <input
+                    name="pincode"
+                    value={formData.pincode}
+                    onChange={handlePincodeChange}
+                    maxLength={6}
+                    placeholder="Pincode"
+                    className="w-full px-5 sm:px-8 py-4 sm:py-5 bg-slate-50 border border-slate-100 rounded-xl sm:rounded-2xl focus:bg-white focus:ring-4 focus:ring-indigo-100/50 focus:border-indigo-500 focus:outline-none text-sm sm:text-base font-bold transition-all placeholder:text-slate-300"
+                  />
+                </div>
               </div>
 
               <div className="group space-y-2 sm:space-y-3">
