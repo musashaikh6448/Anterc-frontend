@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Search, Filter, Trash2, Clock, CheckCircle2, XCircle, AlertCircle, MessageSquare } from 'lucide-react';
+import { Search, Filter, Trash2, Clock, CheckCircle2, XCircle, AlertCircle, MessageSquare, Eye, Upload, FileText, Check } from 'lucide-react';
 import { getAllEnquiries, updateEnquiryStatus, deleteEnquiry } from '@/api/adminApi';
 import { toast } from 'sonner';
 import Pagination from '@/components/admin/Pagination';
 import Modal from '@/components/admin/Modal';
+import EnquiryDetailsModal from '@/components/admin/EnquiryDetailsModal';
+import InvoiceUploadModal from '@/components/admin/InvoiceUploadModal';
 
 const EnquiriesPage: React.FC = () => {
   const [enquiries, setEnquiries] = useState<any[]>([]);
@@ -12,6 +14,10 @@ const EnquiriesPage: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deletingEnquiry, setDeletingEnquiry] = useState<any>(null);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [showUploadModal, setShowUploadModal] = useState(false);
+  const [selectedEnquiry, setSelectedEnquiry] = useState<any>(null);
+  const [uploadEnquiryId, setUploadEnquiryId] = useState<string>('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
@@ -58,6 +64,17 @@ const EnquiriesPage: React.FC = () => {
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Failed to delete enquiry');
     }
+  };
+
+  const handleViewClick = (enquiry: any) => {
+    setSelectedEnquiry(enquiry);
+    setShowDetailsModal(true);
+  };
+
+  const handleUploadClick = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setUploadEnquiryId(id);
+    setShowUploadModal(true);
   };
 
   const getStatusColor = (status: string) => {
@@ -139,6 +156,27 @@ const EnquiriesPage: React.FC = () => {
         onConfirm={handleDeleteConfirm}
         confirmText="Delete"
         cancelText="Cancel"
+      />
+
+      {/* Enquiry Details Modal */}
+      <EnquiryDetailsModal
+        isOpen={showDetailsModal}
+        onClose={() => {
+          setShowDetailsModal(false);
+          setSelectedEnquiry(null);
+        }}
+        enquiry={selectedEnquiry}
+      />
+
+      {/* Invoice Upload Modal */}
+      <InvoiceUploadModal
+        isOpen={showUploadModal}
+        onClose={() => {
+          setShowUploadModal(false);
+          setUploadEnquiryId('');
+        }}
+        enquiryId={uploadEnquiryId}
+        onSuccess={fetchEnquiries}
       />
 
       {/* Filters */}
@@ -266,8 +304,48 @@ const EnquiriesPage: React.FC = () => {
                   <td className="px-4 py-3 text-sm text-slate-500">{formatDate(enquiry.createdAt)}</td>
                   <td className="px-4 py-3">
                     <button
+                      onClick={() => handleViewClick(enquiry)}
+                      className="text-indigo-600 hover:text-indigo-700 p-2 rounded-lg hover:bg-indigo-50 transition-all mr-2"
+                      title="View Details"
+                    >
+                      <Eye size={16} />
+                    </button>
+                    {enquiry.status === 'completed' && (
+                      <div className="flex items-center gap-1 inline-block">
+                        {enquiry.invoiceUrl ? (
+                          <>
+                            <a
+                              href={enquiry.invoiceUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-emerald-600 hover:text-emerald-700 p-2 rounded-lg hover:bg-emerald-50 transition-all mr-1"
+                              title="View Uploaded Invoice"
+                            >
+                              <FileText size={16} />
+                            </a>
+                            <button
+                              onClick={(e) => handleUploadClick(enquiry._id, e)}
+                              className="text-slate-400 hover:text-indigo-600 p-2 rounded-lg hover:bg-slate-100 transition-all mr-2"
+                              title="Re-upload Invoice"
+                            >
+                              <Upload size={16} />
+                            </button>
+                          </>
+                        ) : (
+                          <button
+                            onClick={(e) => handleUploadClick(enquiry._id, e)}
+                            className="text-slate-900 hover:text-indigo-600 p-2 rounded-lg hover:bg-slate-100 transition-all mr-2"
+                            title="Upload Invoice"
+                          >
+                            <Upload size={16} />
+                          </button>
+                        )}
+                      </div>
+                    )}
+                    <button
                       onClick={() => handleDeleteClick(enquiry)}
                       className="text-rose-600 hover:text-rose-700 p-2 rounded-lg hover:bg-rose-50 transition-all"
+                      title="Delete Enquiry"
                     >
                       <Trash2 size={16} />
                     </button>
@@ -332,13 +410,54 @@ const EnquiriesPage: React.FC = () => {
               </div>
             </div>
 
-            <button
-              onClick={() => handleDeleteClick(enquiry)}
-              className="w-full py-2.5 bg-rose-50 text-rose-600 rounded-xl font-bold text-sm hover:bg-rose-100 transition-all flex items-center justify-center gap-2"
-            >
-              <Trash2 size={14} />
-              Delete
-            </button>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                onClick={() => handleViewClick(enquiry)}
+                className="py-2.5 bg-indigo-50 text-indigo-600 rounded-xl font-bold text-sm hover:bg-indigo-100 transition-all flex items-center justify-center gap-2"
+              >
+                <Eye size={14} />
+                View
+              </button>
+              {enquiry.status === 'completed' && (
+                <>
+                  {enquiry.invoiceUrl ? (
+                    <div className="flex gap-2 col-span-2 sm:col-span-1">
+                      <a
+                        href={enquiry.invoiceUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-1 py-2.5 bg-emerald-50 text-emerald-600 rounded-xl font-bold text-sm hover:bg-emerald-100 transition-all flex items-center justify-center gap-2"
+                      >
+                        <FileText size={14} />
+                        View Invoice
+                      </a>
+                      <button
+                        onClick={(e) => handleUploadClick(enquiry._id, e)}
+                        className="py-2.5 px-3 bg-slate-100 text-slate-500 rounded-xl font-bold text-sm hover:bg-slate-200 transition-all flex items-center justify-center"
+                        title="Re-upload"
+                      >
+                        <Upload size={14} />
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={(e) => handleUploadClick(enquiry._id, e)}
+                      className="py-2.5 bg-slate-100 text-slate-800 rounded-xl font-bold text-sm hover:bg-slate-200 transition-all flex items-center justify-center gap-2"
+                    >
+                      <Upload size={14} />
+                      Invoice
+                    </button>
+                  )}
+                </>
+              )}
+              <button
+                onClick={() => handleDeleteClick(enquiry)}
+                className="py-2.5 bg-rose-50 text-rose-600 rounded-xl font-bold text-sm hover:bg-rose-100 transition-all flex items-center justify-center gap-2"
+              >
+                <Trash2 size={14} />
+                Delete
+              </button>
+            </div>
           </div>
         ))}
       </div>

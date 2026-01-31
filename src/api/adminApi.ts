@@ -10,6 +10,8 @@ export const getStatistics = () => api.get('/admin/statistics');
 // Admin Enquiry APIs
 export const getAllEnquiries = () => api.get('/admin/enquiries');
 export const updateEnquiryStatus = (id: string, status: string) => api.put(`/admin/enquiry/${id}`, { status });
+export const updateEnquiry = (id: string, data: any) => api.put(`/admin/enquiry/${id}/update`, data);
+export const uploadInvoice = (id: string, formData: FormData) => api.post(`/admin/enquiry/${id}/invoice`, formData); 
 export const deleteEnquiry = (id: string) => api.delete(`/admin/enquiry/${id}`);
 
 // Admin Customer APIs

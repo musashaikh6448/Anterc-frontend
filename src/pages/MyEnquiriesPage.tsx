@@ -8,7 +8,8 @@ import {
   Package,
   Smartphone,
   MessageSquare,
-  MapPin
+  MapPin,
+  Download
 } from 'lucide-react';
 import { useAuth } from '../AuthContext';
 import { getMyEnquiries } from '@/api/customerApi';
@@ -131,6 +132,18 @@ const MyEnquiriesPage: React.FC = () => {
                       {getStatusIcon(enquiry.status)}
                       {enquiry.status}
                     </span>
+
+                    {enquiry.invoiceUrl && (
+                      <a
+                        href={enquiry.invoiceUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 px-3 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-full text-[10px] font-black uppercase tracking-widest transition-colors"
+                      >
+                        <Download size={14} className="stroke-[3]" />
+                        Invoice
+                      </a>
+                    )}
                   </div>
 
                   {/* TITLE */}

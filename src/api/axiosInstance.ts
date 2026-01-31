@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-  const API = axios.create({
+const API = axios.create({
     // baseURL: 'http://localhost:7070/api', 
   baseURL: 'https://anterc-backend.vercel.app/api',
 });
