@@ -35,6 +35,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
     { icon: LayoutDashboard, label: 'Dashboard', path: '/admin/dashboard' },
     { icon: MessageSquare, label: 'Service Enquiries', path: '/admin/enquiries' },
     { icon: Mail, label: 'Contact Messages', path: '/admin/contact-enquiries' },
+    { icon: UserCog, label: 'Technicians', path: '/admin/technicians' },
     { icon: Users, label: 'Customers', path: '/admin/customers' },
     { icon: UserCog, label: 'Admins', path: '/admin/admins' },
     { icon: Sparkles, label: 'Services', path: '/admin/services' },
@@ -87,13 +88,13 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                   setSidebarOpen(false);
                 }}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl font-bold text-sm transition-all duration-500 group ${active
-                    ? 'bg-slate-900 text-white shadow-xl'
-                    : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                  ? 'bg-slate-900 text-white shadow-xl'
+                  : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
                   }`}
               >
                 <div className={`p-2 rounded-xl transition-all ${active
-                    ? 'bg-white/10'
-                    : 'bg-slate-50 group-hover:bg-indigo-50 group-hover:text-indigo-600'
+                  ? 'bg-white/10'
+                  : 'bg-slate-50 group-hover:bg-indigo-50 group-hover:text-indigo-600'
                   }`}>
                   <Icon size={18} strokeWidth={2.5} />
                 </div>

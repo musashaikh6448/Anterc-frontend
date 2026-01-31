@@ -13,6 +13,7 @@ export const updateEnquiryStatus = (id: string, status: string) => api.put(`/adm
 export const updateEnquiry = (id: string, data: any) => api.put(`/admin/enquiry/${id}/update`, data);
 export const uploadInvoice = (id: string, formData: FormData) => api.post(`/admin/enquiry/${id}/invoice`, formData); 
 export const deleteEnquiry = (id: string) => api.delete(`/admin/enquiry/${id}`);
+export const assignTechnician = (id: string, technicianId: string) => api.put(`/admin/enquiry/${id}/assign`, { technicianId });
 
 // Admin Customer APIs
 export const getAllCustomers = () => api.get('/admin/customers');
@@ -39,3 +40,9 @@ export const getAllGalleryImagesAdmin = () => api.get('/admin/gallery');
 export const createGalleryImage = (imageData: any) => api.post('/admin/gallery', imageData);
 export const updateGalleryImage = (id: string, imageData: any) => api.put(`/admin/gallery/${id}`, imageData);
 export const deleteGalleryImage = (id: string) => api.delete(`/admin/gallery/${id}`);
+
+// Technician Management APIs
+export const getTechnicians = () => api.get('/technicians');
+export const createTechnician = (data: any) => api.post('/technicians', data);
+export const updateTechnician = (id: string, data: any) => api.put(`/technicians/${id}`, data);
+export const deleteTechnician = (id: string) => api.delete(`/technicians/${id}`);

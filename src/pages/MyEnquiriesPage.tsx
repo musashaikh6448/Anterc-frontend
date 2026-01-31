@@ -9,11 +9,13 @@ import {
   Smartphone,
   MessageSquare,
   MapPin,
-  Download
+  Download,
+  UserCog
 } from 'lucide-react';
 import { useAuth } from '../AuthContext';
 import { getMyEnquiries } from '@/api/customerApi';
 import { toast } from 'sonner';
+import TechnicianDetailsModal from '../components/TechnicianDetailsModal';
 
 const MyEnquiriesPage: React.FC = () => {
   const navigate = useNavigate();
@@ -21,6 +23,7 @@ const MyEnquiriesPage: React.FC = () => {
 
   const [enquiries, setEnquiries] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedTechnician, setSelectedTechnician] = useState<any>(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -146,53 +149,70 @@ const MyEnquiriesPage: React.FC = () => {
                     )}
                   </div>
 
-                  {/* TITLE */}
-                  <h3 className="text-2xl font-black text-slate-900">
-                    {enquiry.serviceType}
-                  </h3>
-
-                  {/* META */}
-                  <div className="flex flex-wrap gap-6">
-                    <div className="flex items-center gap-2">
-                      <Smartphone size={14} className="text-slate-400" />
-                      <span className="text-xs font-bold text-slate-500">
-                        {enquiry.applianceType} {enquiry.brand && <span className="font-normal text-slate-400">({enquiry.brand})</span>}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <Clock size={14} className="text-slate-400" />
-                      <span className="text-xs font-bold text-slate-500">
-                        {new Date(enquiry.createdAt).toLocaleDateString()}
-                      </span>
-                    </div>
-
-                    {(enquiry.city || enquiry.address) && (
-                      <div className="flex items-start gap-2 max-w-[50%]">
-                        <MapPin size={14} className="text-slate-400 mt-0.5 shrink-0" />
-                        <div className="flex flex-col">
-                          <span className="text-xs font-bold text-slate-500">
-                            {enquiry.city}{enquiry.state ? `, ${enquiry.state}` : ''} {enquiry.pincode && `- ${enquiry.pincode}`}
-                          </span>
-                          {enquiry.address && <span className="text-[10px] text-slate-400 leading-tight mt-0.5">{enquiry.address}</span>}
-                          {enquiry.landmark && <span className="text-[10px] text-indigo-500 font-medium mt-0.5">Near {enquiry.landmark}</span>}
-                        </div>
+                  {enquiry.technician && (
+                    <div
+                      onClick={() => setSelectedTechnician(enquiry.technician)}
+                      className="flex items-center gap-3 bg-indigo-50/50 p-3 rounded-xl border border-indigo-100 cursor-pointer hover:bg-indigo-50 hover:border-indigo-200 transition-all group"
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center text-indigo-600 group-hover:scale-110 transition-transform">
+                        <UserCog size={16} />
                       </div>
-                    )}
-                  </div>
-
-                  {/* MESSAGE */}
-                  {enquiry.message && (
-                    <div className="bg-slate-50 rounded-2xl p-4 border text-sm text-slate-600 whitespace-pre-line">
-                      <div className="flex items-center gap-2 mb-2 text-slate-400 font-bold text-xs uppercase">
-                        <MessageSquare size={14} />
-                        Enquiry Details
+                      <div>
+                        <p className="text-[10px] font-bold text-indigo-400 uppercase tracking-wider group-hover:text-indigo-600 transition-colors">Assigned Technician</p>
+                        <p className="text-sm font-bold text-slate-900">{enquiry.technician.name}</p>
+                        {/* <p className="text-xs text-slate-500 font-medium">{enquiry.technician.phone}</p> */}
+                        <p className="text-[10px] text-slate-400 font-medium">Click to view details</p>
                       </div>
-                      {enquiry.message.trim()}
                     </div>
                   )}
-
                 </div>
+
+                {/* TITLE */}
+                <h3 className="text-2xl font-black text-slate-900">
+                  {enquiry.serviceType}
+                </h3>
+
+                {/* META */}
+                <div className="flex flex-wrap gap-6">
+                  <div className="flex items-center gap-2">
+                    <Smartphone size={14} className="text-slate-400" />
+                    <span className="text-xs font-bold text-slate-500">
+                      {enquiry.applianceType} {enquiry.brand && <span className="font-normal text-slate-400">({enquiry.brand})</span>}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <Clock size={14} className="text-slate-400" />
+                    <span className="text-xs font-bold text-slate-500">
+                      {new Date(enquiry.createdAt).toLocaleDateString()}
+                    </span>
+                  </div>
+
+                  {(enquiry.city || enquiry.address) && (
+                    <div className="flex items-start gap-2 max-w-[50%]">
+                      <MapPin size={14} className="text-slate-400 mt-0.5 shrink-0" />
+                      <div className="flex flex-col">
+                        <span className="text-xs font-bold text-slate-500">
+                          {enquiry.city}{enquiry.state ? `, ${enquiry.state}` : ''} {enquiry.pincode && `- ${enquiry.pincode}`}
+                        </span>
+                        {enquiry.address && <span className="text-[10px] text-slate-400 leading-tight mt-0.5">{enquiry.address}</span>}
+                        {enquiry.landmark && <span className="text-[10px] text-indigo-500 font-medium mt-0.5">Near {enquiry.landmark}</span>}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* MESSAGE */}
+                {enquiry.message && (
+                  <div className="bg-slate-50 rounded-2xl p-4 border text-sm text-slate-600 whitespace-pre-line">
+                    <div className="flex items-center gap-2 mb-2 text-slate-400 font-bold text-xs uppercase">
+                      <MessageSquare size={14} />
+                      Enquiry Details
+                    </div>
+                    {enquiry.message.trim()}
+                  </div>
+                )}
+
               </div>
             ))}
           </div>
@@ -213,6 +233,11 @@ const MyEnquiriesPage: React.FC = () => {
             </button>
           </div>
         )}
+        <TechnicianDetailsModal
+          isOpen={!!selectedTechnician}
+          onClose={() => setSelectedTechnician(null)}
+          technician={selectedTechnician}
+        />
       </div>
     </div>
   );

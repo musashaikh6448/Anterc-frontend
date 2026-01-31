@@ -1,28 +1,67 @@
 import React, { useEffect } from 'react';
-import { X, Copy, MessageCircle, User, Phone, Mail, MapPin, Calendar, Wrench, FileText } from 'lucide-react';
+import { X, Copy, MessageCircle, User, Phone, Mail, MapPin, Calendar, Wrench, FileText, UserCog } from 'lucide-react';
 import { toast } from 'sonner';
+import { getTechnicians, assignTechnician } from '../../api/adminApi';
 
 interface EnquiryDetailsModalProps {
     isOpen: boolean;
     onClose: () => void;
     enquiry: any;
+    onUpdate?: () => void;
 }
 
 const EnquiryDetailsModal: React.FC<EnquiryDetailsModalProps> = ({
     isOpen,
     onClose,
     enquiry,
+    onUpdate
 }) => {
+    const [technicians, setTechnicians] = React.useState<any[]>([]);
+    const [selectedTechnician, setSelectedTechnician] = React.useState('');
+    const [assigning, setAssigning] = React.useState(false);
+
     useEffect(() => {
         if (isOpen) {
             document.body.style.overflow = 'hidden';
+            fetchTechnicians();
+            if (enquiry?.technician?._id) {
+                setSelectedTechnician(enquiry.technician._id);
+            } else if (enquiry?.technician) {
+                setSelectedTechnician(enquiry.technician);
+            } else {
+                setSelectedTechnician('');
+            }
         } else {
             document.body.style.overflow = 'unset';
         }
         return () => {
             document.body.style.overflow = 'unset';
         };
-    }, [isOpen]);
+    }, [isOpen, enquiry]);
+
+    const fetchTechnicians = async () => {
+        try {
+            const { data } = await getTechnicians();
+            setTechnicians(data);
+        } catch (error) {
+            console.error('Failed to load technicians');
+        }
+    };
+
+    const handleAssign = async () => {
+        if (!selectedTechnician) return;
+        setAssigning(true);
+        try {
+            await assignTechnician(enquiry._id, selectedTechnician);
+            toast.success('Technician assigned successfully');
+            if (onUpdate) onUpdate();
+            onClose();
+        } catch (error) {
+            toast.error('Failed to assign technician');
+        } finally {
+            setAssigning(false);
+        }
+    };
 
     if (!isOpen || !enquiry) return null;
 
@@ -164,6 +203,43 @@ ${enquiry.message || 'No message provided'}
                                 <p className="text-xs font-bold text-slate-400 mb-1">Message / Requirement</p>
                                 <p className="text-sm text-slate-700 leading-relaxed">{enquiry.message || 'No specific message provided.'}</p>
                             </div>
+                        </div>
+                    </div>
+
+                    {/* Technician Assignment Section */}
+                    <div className="space-y-4">
+                        <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-2">
+                            Technician Assignment
+                        </h3>
+                        <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Assign Technician</label>
+                            <div className="flex gap-2">
+                                <select
+                                    value={selectedTechnician}
+                                    onChange={(e) => setSelectedTechnician(e.target.value)}
+                                    className="flex-1 px-4 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/20 text-sm font-medium text-slate-700"
+                                >
+                                    <option value="">Select Technician</option>
+                                    {technicians.map(tech => (
+                                        <option key={tech._id} value={tech._id}>
+                                            {tech.name} ({tech.availabilityStatus})
+                                        </option>
+                                    ))}
+                                </select>
+                                <button
+                                    onClick={handleAssign}
+                                    disabled={assigning || !selectedTechnician || selectedTechnician === enquiry?.technician?._id}
+                                    className="px-4 py-2 bg-indigo-600 text-white rounded-lg font-bold text-sm hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                >
+                                    {assigning ? '...' : 'Assign'}
+                                </button>
+                            </div>
+                            {enquiry.technician && (
+                                <div className="mt-3 flex items-center gap-2 text-xs font-medium text-emerald-600 bg-emerald-50 px-3 py-2 rounded-lg border border-emerald-100">
+                                    <UserCog size={14} />
+                                    Currently Assigned: {enquiry.technician.name}
+                                </div>
+                            )}
                         </div>
                     </div>
 

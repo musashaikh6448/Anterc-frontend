@@ -8,6 +8,7 @@ import CustomersPage from './admin/CustomersPage';
 import AdminsPage from './admin/AdminsPage';
 import ServicesPage from './admin/ServicesPage';
 import ThemePage from './admin/ThemePage';
+import TechniciansPage from './admin/TechniciansPage';
 
 import ContactEnquiriesPage from './admin/ContactEnquiriesPage';
 
@@ -41,6 +42,7 @@ const AdminDashboard: React.FC = () => {
     if (path.includes('/admins')) return <AdminsPage />;
     if (path.includes('/services')) return <ServicesPage />;
     if (path.includes('/theme')) return <ThemePage />;
+    if (path.includes('/technicians')) return <TechniciansPage />;
     return <DashboardPage />;
   };
 
