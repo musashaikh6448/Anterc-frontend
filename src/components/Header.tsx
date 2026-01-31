@@ -57,9 +57,9 @@ const Header: React.FC = () => {
                   />
                 </div>
               ) : (
-                <div 
+                <div
                   className="bg-slate-900 w-9  sm:w-12 h-12 rounded-xl sm:rounded-[1.25rem] flex items-center justify-center transition-all duration-500 group-hover:shadow-xl"
-                  style={{ 
+                  style={{
                     backgroundColor: theme?.colors?.primary || '#4f46e5',
                     boxShadow: '0 0 0 0 rgba(0,0,0,0)'
                   }}
@@ -82,11 +82,11 @@ const Header: React.FC = () => {
                 <span className="text-slate-900 font-black text-base sm:text-xl tracking-tight leading-tight">
                   {theme?.logo?.text || 'Antarc Services'}
                 </span>
-                <span 
+                <span
                   className="font-extrabold uppercase tracking-[0.2em] text-[7px] sm:text-[9px]"
                   style={{ color: theme?.colors?.primary || '#6366f1' }}
                 >
-                  {theme?.logo?.subText || 'Nanded'}
+                  {theme?.logo?.subText || 'Services'}
                 </span>
               </div>
             </Link>
@@ -94,9 +94,9 @@ const Header: React.FC = () => {
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-8">
               {navLinks.map(link => (
-                <Link 
-                  key={link.path} 
-                  to={link.path} 
+                <Link
+                  key={link.path}
+                  to={link.path}
                   className={`text-sm font-black uppercase tracking-widest transition-colors ${location.pathname === link.path ? '' : 'text-slate-500'}`}
                   style={location.pathname === link.path ? { color: theme?.colors?.primary || '#4f46e5' } : {}}
                   onMouseEnter={(e) => {
@@ -117,7 +117,7 @@ const Header: React.FC = () => {
 
             {/* Actions Section */}
             <div className="flex items-center gap-1 sm:gap-4">
-              <button 
+              <button
                 onClick={() => setIsSearchOpen(true)}
                 className="p-2.5 sm:p-3.5 text-slate-500 rounded-xl transition-all active:scale-90"
                 onMouseEnter={(e) => {
@@ -135,7 +135,7 @@ const Header: React.FC = () => {
 
               {user ? (
                 <div className="relative">
-                  <button 
+                  <button
                     onClick={() => setIsProfileOpen(!isProfileOpen)}
                     className="flex items-center gap-2 px-3 py-2 bg-slate-50 rounded-xl border border-slate-100 transition-all"
                     onMouseEnter={(e) => {
@@ -146,7 +146,7 @@ const Header: React.FC = () => {
                       e.currentTarget.style.borderColor = '';
                     }}
                   >
-                    <div 
+                    <div
                       className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-black uppercase"
                       style={{ backgroundColor: theme?.colors?.primary || '#4f46e5' }}
                     >
@@ -158,8 +158,8 @@ const Header: React.FC = () => {
 
                   {isProfileOpen && (
                     <div className="absolute top-full right-0 mt-2 w-56 bg-white rounded-2xl shadow-2xl border border-slate-100 p-2 animate-in slide-in-from-top-2">
-                      <Link 
-                        to="/my-enquiries" 
+                      <Link
+                        to="/my-enquiries"
                         className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-700 rounded-xl transition-colors"
                         onMouseEnter={(e) => {
                           const primary = theme?.colors?.primary || '#4f46e5';
@@ -174,7 +174,7 @@ const Header: React.FC = () => {
                         <ClipboardList size={18} />
                         My Enquiries
                       </Link>
-                      <button 
+                      <button
                         onClick={handleLogout}
                         className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-rose-600 hover:bg-rose-50 rounded-xl transition-colors"
                       >
@@ -185,10 +185,10 @@ const Header: React.FC = () => {
                   )}
                 </div>
               ) : (
-                <Link 
+                <Link
                   to="/auth"
                   className="hidden sm:flex items-center gap-2 px-6 py-3 text-white rounded-xl text-sm font-black uppercase tracking-widest transition-all shadow-lg"
-                  style={{ 
+                  style={{
                     backgroundColor: theme?.colors?.dark || '#0f172a',
                     boxShadow: `0 10px 15px -3px ${theme?.colors?.primary || '#4f46e5'}20, 0 4px 6px -2px ${theme?.colors?.primary || '#4f46e5'}10`
                   }}
@@ -204,7 +204,7 @@ const Header: React.FC = () => {
                 </Link>
               )}
 
-              <button 
+              <button
                 onClick={() => setIsMenuOpen(true)}
                 className="lg:hidden p-2.5 sm:p-3.5 text-slate-500 hover:bg-slate-50 rounded-xl transition-all"
               >
@@ -218,22 +218,20 @@ const Header: React.FC = () => {
       <SearchOverlay isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
 
       {/* Mobile Menu */}
-      <div 
-        className={`fixed inset-0 z-[60] bg-slate-950/40 backdrop-blur-sm transition-opacity duration-500 lg:hidden ${
-          isMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
-        }`}
+      <div
+        className={`fixed inset-0 z-[60] bg-slate-950/40 backdrop-blur-sm transition-opacity duration-500 lg:hidden ${isMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+          }`}
         onClick={() => setIsMenuOpen(false)}
       />
 
-      <div 
-        className={`fixed inset-y-0 right-0 z-[70] w-full max-w-[280px] bg-white shadow-2xl transform transition-all duration-500 lg:hidden ${
-          isMenuOpen ? 'translate-x-0 visible' : 'translate-x-full pointer-events-none invisible delay-500'
-        }`}
+      <div
+        className={`fixed inset-y-0 right-0 z-[70] w-full max-w-[280px] bg-white shadow-2xl transform transition-all duration-500 lg:hidden ${isMenuOpen ? 'translate-x-0 visible' : 'translate-x-full pointer-events-none invisible delay-500'
+          }`}
       >
         <div className="flex flex-col h-full bg-slate-50/30">
           <div className="flex items-center justify-between p-6 border-b border-slate-100">
             <Link to="/" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-2">
-              <div 
+              <div
                 className="w-8 h-8 rounded-lg flex items-center justify-center"
                 style={{ backgroundColor: theme?.colors?.dark || '#0f172a' }}
               >
@@ -252,35 +250,35 @@ const Header: React.FC = () => {
 
           <div className="flex-1 p-6 space-y-4">
             {user && (
-               <div className="pb-6 mb-6 border-b border-slate-100">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div 
-                      className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-black"
-                      style={{ backgroundColor: theme?.colors?.primary || '#4f46e5' }}
-                    >
-                      {user.name.charAt(0)}
-                    </div>
-                    <div>
-                      <p className="font-black text-slate-900 leading-none">{user.name}</p>
-                      <p className="text-xs text-slate-400 font-bold mt-1">+91 {user.mobile}</p>
-                    </div>
-                  </div>
-                  <Link 
-                    to="/my-enquiries" 
-                    onClick={() => setIsMenuOpen(false)}
-                    className="flex items-center gap-3 py-3 font-black text-sm uppercase tracking-widest"
-                    style={{ color: theme?.colors?.primary || '#4f46e5' }}
+              <div className="pb-6 mb-6 border-b border-slate-100">
+                <div className="flex items-center gap-3 mb-4">
+                  <div
+                    className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-black"
+                    style={{ backgroundColor: theme?.colors?.primary || '#4f46e5' }}
                   >
-                    <ClipboardList size={18} />
-                    My Enquiries
-                  </Link>
-               </div>
+                    {user.name.charAt(0)}
+                  </div>
+                  <div>
+                    <p className="font-black text-slate-900 leading-none">{user.name}</p>
+                    <p className="text-xs text-slate-400 font-bold mt-1">+91 {user.mobile}</p>
+                  </div>
+                </div>
+                <Link
+                  to="/my-enquiries"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="flex items-center gap-3 py-3 font-black text-sm uppercase tracking-widest"
+                  style={{ color: theme?.colors?.primary || '#4f46e5' }}
+                >
+                  <ClipboardList size={18} />
+                  My Enquiries
+                </Link>
+              </div>
             )}
-            
+
             {navLinks.map(link => (
-              <Link 
-                key={link.path} 
-                to={link.path} 
+              <Link
+                key={link.path}
+                to={link.path}
                 onClick={() => setIsMenuOpen(false)}
                 className={`block py-3 font-black text-lg tracking-tight ${location.pathname === link.path ? '' : 'text-slate-900'}`}
                 style={location.pathname === link.path ? { color: theme?.colors?.primary || '#4f46e5' } : {}}
@@ -290,8 +288,8 @@ const Header: React.FC = () => {
             ))}
 
             {!user ? (
-               <Link 
-                to="/auth" 
+              <Link
+                to="/auth"
                 onClick={() => setIsMenuOpen(false)}
                 className="mt-6 flex items-center justify-center gap-3 py-4 text-white font-black rounded-xl"
                 style={{ backgroundColor: theme?.colors?.primary || '#4f46e5' }}
@@ -300,7 +298,7 @@ const Header: React.FC = () => {
                 Login / Sign Up
               </Link>
             ) : (
-              <button 
+              <button
                 onClick={() => {
                   handleLogout();
                   setIsMenuOpen(false);

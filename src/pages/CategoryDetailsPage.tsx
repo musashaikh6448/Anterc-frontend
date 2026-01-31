@@ -125,7 +125,7 @@ const CategoryDetailsPage: React.FC = () => {
                 <div className="flex text-amber-400 gap-0.5">
                   {[1, 2, 3, 4, 5].map(i => <Star key={i} size={14} className="sm:w-4 sm:h-4" fill="currentColor" />)}
                 </div>
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Nanded #1 Rated Service</span>
+                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">#1 Rated Service</span>
               </div>
               <h1 className="text-4xl sm:text-6xl lg:text-8xl font-black text-slate-900 tracking-tighter leading-[1]">
                 {category.title}

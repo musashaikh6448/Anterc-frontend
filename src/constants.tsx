@@ -27,7 +27,7 @@ export const CATEGORIES: Category[] = [
   {
     id: 'plumbing',
     title: 'Plumbing',
-    description: 'Fixing leakages, tap repairs, and tank cleaning in Nanded.',
+    description: 'Fixing leakages, tap repairs, and tank cleaning.',
     imageUrl: 'https://images.unsplash.com/photo-1504148455328-c376907d081c?auto=format&fit=crop&q=80&w=800',
     services: [
       { id: 'plu-1', name: 'Tap & Leakage Fix', description: 'Repairing dripping taps and pipes.', price: 149, estimatedTime: '30 mins', imageUrl: 'https://images.unsplash.com/photo-1504148455328-c376907d081c?auto=format&fit=crop&q=80&w=800' },
@@ -98,7 +98,7 @@ export const BANNERS = [
   {
     id: 1,
     title: "Professional AC Care",
-    subtitle: "Emergency Repairs & Expert Maintenance at Your Doorstep in Nanded",
+    subtitle: "Emergency Repairs & Expert Maintenance at Your Doorstep",
     image: "https://images.unsplash.com/photo-1591123120675-6f7f1aae0e5b?auto=format&fit=crop&q=100&w=1600"
   },
   {
@@ -113,7 +113,7 @@ export const TERMS_SECTIONS = [
   {
     id: 1,
     title: "Acceptance of Terms",
-    content: "By accessing and using Antarc Services, you agree to be bound by these Terms and Conditions. Our services are available to residents of Nanded and surrounding urban areas."
+    content: "By accessing and using Antarc Services, you agree to be bound by these Terms and Conditions. Our services are available to our customers and surrounding urban areas."
   },
   {
     id: 2,

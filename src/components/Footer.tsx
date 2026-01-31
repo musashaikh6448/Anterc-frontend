@@ -7,7 +7,7 @@ const Footer: React.FC = () => {
     <footer className="bg-slate-900 text-slate-300 py-16 sm:py-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-16">
-          
+
           {/* Brand */}
           <div className="space-y-6 text-left">
             <Link to="/" className="flex items-center gap-3 justify-start">
@@ -19,7 +19,7 @@ const Footer: React.FC = () => {
               </h3>
             </Link>
             <p className="text-sm text-slate-400 leading-relaxed max-w-xs">
-              Nanded's top-rated doorstep service for AC and household appliances. Professional work, transparent pricing support.
+              Top-rated doorstep service for AC and household appliances. Professional work, transparent pricing support.
             </p>
             <div className="flex justify-start gap-5">
               <a
@@ -90,7 +90,7 @@ const Footer: React.FC = () => {
         {/* Bottom Footer */}
         <div className="border-t border-slate-800/60 mt-20 pt-10 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest text-center sm:text-left">
-            © {new Date().getFullYear()} Antarc Services Nanded. Trusted Professional Service.
+            © {new Date().getFullYear()} Antarc Services. Trusted Professional Service.
           </p>
 
           <a

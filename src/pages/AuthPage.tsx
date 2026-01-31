@@ -29,7 +29,7 @@ const AuthPage: React.FC = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    
+
     // Validate mobile number to only allow 10 digits
     if (name === 'mobile') {
       const numericValue = value.replace(/\D/g, ''); // Remove non-digits
@@ -43,13 +43,13 @@ const AuthPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validate mobile number
     if (formData.mobile.length !== 10) {
       toast.error('Mobile number must be exactly 10 digits');
       return;
     }
-    
+
     setLoading(true);
 
     try {
@@ -97,7 +97,7 @@ const AuthPage: React.FC = () => {
           </h1>
           <p className="text-slate-500 font-medium max-w-xs mx-auto">
             {mode === 'login'
-              ? 'Access your service enquiries and bookings in Nanded.'
+              ? 'Access your service enquiries and bookings.'
               : 'Join Antarc Services for a faster checkout experience.'}
           </p>
         </div>

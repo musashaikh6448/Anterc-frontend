@@ -55,7 +55,7 @@ const ContactPage: React.FC = () => {
           <div className="max-w-3xl space-y-4">
             <span className="text-indigo-600 font-black text-xs uppercase tracking-[0.3em]">Get In Touch</span>
             <h1 className="text-4xl sm:text-6xl lg:text-8xl font-black text-slate-900 tracking-tighter leading-[1]">Contact Us</h1>
-            <p className="text-lg text-slate-500 font-medium">We're here to help you, with any appliance issues in Nanded.</p>
+            <p className="text-lg text-slate-500 font-medium">We're here to help you, with any appliance issues.</p>
           </div>
         </div>
       </section>

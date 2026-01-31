@@ -31,7 +31,7 @@ const GalleryPage: React.FC = () => {
           <div className="max-w-3xl space-y-4">
             <span className="text-indigo-600 font-black text-xs uppercase tracking-[0.3em]">Our Work</span>
             <h1 className="text-4xl sm:text-6xl lg:text-8xl font-black text-slate-900 tracking-tighter leading-[1]">Project Gallery</h1>
-            <p className="text-lg text-slate-500 font-medium">Real results from our verified technicians in Nanded.</p>
+            <p className="text-lg text-slate-500 font-medium">Real results from our verified technicians for you.</p>
           </div>
         </div>
       </section>
@@ -45,9 +45,9 @@ const GalleryPage: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {images.map((image) => (
               <div key={image._id} className="group overflow-hidden rounded-[2.5rem] bg-slate-100  shadow-lg border border-slate-100">
-                <ImageWithSkeleton 
-                  src={image.imageUrl} 
-                  alt={image.title || `Gallery image ${image._id}`} 
+                <ImageWithSkeleton
+                  src={image.imageUrl}
+                  alt={image.title || `Gallery image ${image._id}`}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />
                 {image.title && (

@@ -143,7 +143,7 @@ const HomePage: React.FC = () => {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-20 md:py-24">
         <div className="grid grid-cols-3 gap-1.5 sm:gap-8">
           {[
-            { icon: <ShieldCheck />, title: "Certified Pro", sub: "Nanded Verified" },
+            { icon: <ShieldCheck />, title: "Certified Pro", sub: "Fully Verified" },
             { icon: <Phone />, title: "Call Anytime", sub: "Instant Response" },
             { icon: <Award />, title: "Genuine Parts", sub: "90-Day Warranty" }
           ].map((item, idx) => (
@@ -191,7 +191,7 @@ const HomePage: React.FC = () => {
             </h2>
           </div>
           <p className="text-slate-500 max-w-sm text-base sm:text-lg font-medium leading-relaxed text-center lg:text-left mx-auto lg:mx-0">
-            Professional AC and appliance solutions delivered by expert technicians at your doorstep in Nanded.
+            Professional AC and appliance solutions delivered by expert technicians at your doorstep.
           </p>
         </div>
 
@@ -233,7 +233,7 @@ const HomePage: React.FC = () => {
               Facing an <span style={{ color: theme?.colors?.secondary || '#6366f1' }}>Emergency</span> Repair?
             </h2>
             <p className="text-slate-400 text-base sm:text-xl lg:text-2xl font-medium max-w-2xl mx-auto leading-relaxed">
-              Call us now or send a WhatsApp message for doorstep service in Nanded.
+              Call us now or send a WhatsApp message for doorstep service.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center pt-6 sm:pt-10">
               <a

@@ -73,12 +73,12 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose }) => {
   return (
     <div className="fixed inset-0 z-[60] flex flex-col">
       <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-xl transition-opacity animate-in fade-in" onClick={onClose} />
-      
+
       <div className="relative w-full max-w-3xl mx-auto mt-4 sm:mt-20 px-4 animate-in slide-in-from-top-8">
         <div className="bg-white rounded-[2.5rem] shadow-2xl overflow-hidden border border-slate-200">
           <div className="flex items-center gap-4 px-6 sm:px-8 py-6 border-b border-slate-100">
             <Search className="text-indigo-600" size={24} strokeWidth={3} />
-            <input 
+            <input
               ref={inputRef}
               type="text"
               placeholder="Search for AC service, TV repair..."
@@ -100,8 +100,8 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose }) => {
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Popular Searches</p>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    {['AC Deep Cleaning', 'AC Service Nanded', 'Washing Machine Repair', 'TV Repair'].map((item) => (
-                      <button 
+                    {['AC Deep Cleaning', 'AC Service', 'Washing Machine Repair', 'TV Repair'].map((item) => (
+                      <button
                         key={item}
                         onClick={() => setQuery(item)}
                         className="px-4 py-2 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold text-slate-600 transition-all"
@@ -137,17 +137,17 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose }) => {
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 px-2">Categories</p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {searchResults.categories.map((cat: any) => (
-                        <Link 
-                          key={cat.id} 
-                          to={`/category/${cat.id}`} 
-                          onClick={onClose} 
+                        <Link
+                          key={cat.id}
+                          to={`/category/${cat.id}`}
+                          onClick={onClose}
                           className="flex items-center gap-4 p-4 rounded-2xl hover:bg-slate-50 border border-transparent hover:border-slate-100 group transition-all"
                         >
                           {cat.imageUrl && (
                             <img src={cat.imageUrl} className="w-12 h-12 rounded-xl object-cover" alt={cat.title} />
                           )}
                           <div className="flex-1">
-                            <p 
+                            <p
                               className="font-bold text-slate-900 transition-colors"
                               style={{ color: 'inherit' }}
                               onMouseEnter={(e) => {
@@ -161,8 +161,8 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose }) => {
                             </p>
                             <p className="text-[10px] text-slate-400 font-medium">Verified Pros</p>
                           </div>
-                          <ArrowRight 
-                            size={16} 
+                          <ArrowRight
+                            size={16}
                             className="text-slate-200 transition-colors"
                             style={{ color: 'inherit' }}
                             onMouseEnter={(e) => {
@@ -184,15 +184,15 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose }) => {
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 px-2">Services</p>
                     <div className="grid grid-cols-1 gap-2">
                       {searchResults.subServices.map((service: any) => (
-                        <Link 
-                          key={service.serviceId} 
-                          to={`/enquiry/${service.categoryId}/${service.serviceId}`} 
-                          onClick={onClose} 
+                        <Link
+                          key={service.serviceId}
+                          to={`/enquiry/${service.categoryId}/${service.serviceId}`}
+                          onClick={onClose}
                           className="flex items-center gap-4 p-4 rounded-2xl bg-white border border-slate-100 hover:border-slate-200 group transition-all"
                         >
-                          <div 
+                          <div
                             className="w-10 h-10 rounded-xl flex items-center justify-center"
-                            style={{ 
+                            style={{
                               backgroundColor: theme?.colors?.primary ? `${theme.colors.primary}10` : '#eef2ff',
                               color: theme?.colors?.primary || '#4f46e5'
                             }}
@@ -200,7 +200,7 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose }) => {
                             <Zap size={20} />
                           </div>
                           <div className="flex-1">
-                            <p 
+                            <p
                               className="font-bold text-slate-900 transition-colors"
                               onMouseEnter={(e) => {
                                 e.currentTarget.style.color = theme?.colors?.primary || '#4f46e5';
@@ -220,8 +220,8 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose }) => {
                               </p>
                             )}
                           </div>
-                          <ArrowRight 
-                            size={16} 
+                          <ArrowRight
+                            size={16}
                             className="text-slate-200 transition-colors"
                             onMouseEnter={(e) => {
                               e.currentTarget.style.color = theme?.colors?.primary || '#4f46e5';
@@ -242,17 +242,17 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose }) => {
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 px-2">Service Categories</p>
                     <div className="grid grid-cols-1 gap-2">
                       {searchResults.services.map((service: any) => (
-                        <Link 
-                          key={service._id} 
-                          to={`/category/${service.categoryId}`} 
-                          onClick={onClose} 
+                        <Link
+                          key={service._id}
+                          to={`/category/${service.categoryId}`}
+                          onClick={onClose}
                           className="flex items-center gap-4 p-4 rounded-2xl bg-white border border-slate-100 hover:border-slate-200 group transition-all"
                         >
                           {service.imageUrl && (
                             <img src={service.imageUrl} className="w-12 h-12 rounded-xl object-cover" alt={service.title} />
                           )}
                           <div className="flex-1">
-                            <p 
+                            <p
                               className="font-bold text-slate-900 transition-colors"
                               onMouseEnter={(e) => {
                                 e.currentTarget.style.color = theme?.colors?.primary || '#4f46e5';
@@ -265,8 +265,8 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose }) => {
                             </p>
                             <p className="text-xs text-slate-400 font-medium line-clamp-1">{service.description}</p>
                           </div>
-                          <ArrowRight 
-                            size={16} 
+                          <ArrowRight
+                            size={16}
                             className="text-slate-200 transition-colors"
                             onMouseEnter={(e) => {
                               e.currentTarget.style.color = theme?.colors?.primary || '#4f46e5';
