@@ -260,7 +260,7 @@ const Header: React.FC = () => {
                   </div>
                   <div>
                     <p className="font-black text-slate-900 leading-none">{user.name}</p>
-                    <p className="text-xs text-slate-400 font-bold mt-1">+91 {user.mobile}</p>
+                    <p className="text-xs text-slate-400 font-bold mt-1"> {user.mobile}</p>
                   </div>
                 </div>
                 <Link
