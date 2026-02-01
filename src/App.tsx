@@ -67,7 +67,7 @@ const AppLayoutContent = () => {
       <Routes>
         <Route path="/admin/*" element={null} />
         <Route path="*" element={
-          <div className="fixed bottom-6 right-6 md:hidden z-40">
+          <div className="fixed bottom-6 right-6 2xl:hidden z-40">
             <a
               href="tel:+917385650510"
               className="text-white w-14 h-14 rounded-2xl shadow-2xl flex items-center justify-center transition-all border border-white/10"

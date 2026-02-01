@@ -10,12 +10,12 @@ import {
   MessageSquare,
   MapPin,
   Download,
-  UserCog
+  UserCog,
+  Phone
 } from 'lucide-react';
 import { useAuth } from '../AuthContext';
 import { getMyEnquiries } from '@/api/customerApi';
 import { toast } from 'sonner';
-import TechnicianDetailsModal from '../components/TechnicianDetailsModal';
 
 const MyEnquiriesPage: React.FC = () => {
   const navigate = useNavigate();
@@ -23,7 +23,6 @@ const MyEnquiriesPage: React.FC = () => {
 
   const [enquiries, setEnquiries] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedTechnician, setSelectedTechnician] = useState<any>(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -149,22 +148,13 @@ const MyEnquiriesPage: React.FC = () => {
                     )}
                   </div>
 
-                  {enquiry.technician && (
-                    <div
-                      onClick={() => setSelectedTechnician(enquiry.technician)}
-                      className="flex items-center gap-3 bg-indigo-50/50 p-3 rounded-xl border border-indigo-100 cursor-pointer hover:bg-indigo-50 hover:border-indigo-200 transition-all group"
-                    >
-                      <div className="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center text-indigo-600 group-hover:scale-110 transition-transform">
-                        <UserCog size={16} />
-                      </div>
-                      <div>
-                        <p className="text-[10px] font-bold text-indigo-400 uppercase tracking-wider group-hover:text-indigo-600 transition-colors">Assigned Technician</p>
-                        <p className="text-sm font-bold text-slate-900">{enquiry.technician.name}</p>
-                        {/* <p className="text-xs text-slate-500 font-medium">{enquiry.technician.phone}</p> */}
-                        <p className="text-[10px] text-slate-400 font-medium">Click to view details</p>
-                      </div>
-                    </div>
-                  )}
+                  <a
+                    href="tel:+917385650510"
+                    className="flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-700 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-indigo-100 transition-colors border border-indigo-100"
+                  >
+                    <Phone size={14} className="stroke-[3]" />
+                    Call Support
+                  </a>
                 </div>
 
                 {/* TITLE */}
@@ -233,11 +223,7 @@ const MyEnquiriesPage: React.FC = () => {
             </button>
           </div>
         )}
-        <TechnicianDetailsModal
-          isOpen={!!selectedTechnician}
-          onClose={() => setSelectedTechnician(null)}
-          technician={selectedTechnician}
-        />
+
       </div>
     </div>
   );
