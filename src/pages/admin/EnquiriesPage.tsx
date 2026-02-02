@@ -271,7 +271,19 @@ const EnquiriesPage: React.FC = () => {
                   </td>
                   <td className="px-4 py-3">
                     <div>
-                      <div className="text-sm font-bold text-slate-900">{enquiry.user?.name || 'N/A'}</div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-bold text-slate-900">{enquiry.user?.name || 'N/A'}</span>
+                        {enquiry.bookedFor === 'others' && (
+                          <span className="px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-700 text-[10px] font-bold uppercase tracking-wider">
+                            For Friend
+                          </span>
+                        )}
+                        {enquiry.bookedFor === 'myself' && (
+                          <span className="px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] font-bold uppercase tracking-wider">
+                            Self
+                          </span>
+                        )}
+                      </div>
                       <div className="text-xs text-slate-500">{enquiry.user?.phone || 'N/A'}</div>
                     </div>
                   </td>
@@ -383,7 +395,19 @@ const EnquiriesPage: React.FC = () => {
             <div className="space-y-2 mb-3">
               <div>
                 <div className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Customer</div>
-                <div className="text-sm font-bold text-slate-900">{enquiry.user?.name || 'N/A'}</div>
+                <div className="flex items-center gap-2 mb-0.5">
+                  <div className="text-sm font-bold text-slate-900">{enquiry.user?.name || 'N/A'}</div>
+                  {enquiry.bookedFor === 'others' && (
+                    <span className="px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-700 text-[10px] font-bold uppercase tracking-wider">
+                      For Friend
+                    </span>
+                  )}
+                  {enquiry.bookedFor === 'myself' && (
+                    <span className="px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] font-bold uppercase tracking-wider">
+                      Self
+                    </span>
+                  )}
+                </div>
                 <div className="text-xs text-slate-500">{enquiry.user?.phone || 'N/A'}</div>
               </div>
               <div>

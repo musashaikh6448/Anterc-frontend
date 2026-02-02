@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import BannerCarousel from '../components/BannerCarousel';
 import CategoryCard from '../components/CategoryCard';
 import { ShieldCheck, Clock, Phone, Award, Zap, MessageCircle } from 'lucide-react';
-import { getAllServices } from '@/api/serviceApi';
+import { getAllServices, getAllCategories } from '@/api/serviceApi';
 import { Category } from '../types';
 import { useTheme } from '../contexts/ThemeContext';
 
@@ -16,104 +16,91 @@ const HomePage: React.FC = () => {
   }, []);
 
   // Define priority order for categories (most used to least used)
-  const getCategoryPriority = (categoryName: string): number => {
-    const priorityOrder: Record<string, number> = {
-      // High priority - Most commonly used appliances (AC comes first)
-      'Air Conditioner': 1,
-      'Washing Machine': 2,
-      'Refrigerator': 3,
-      'Microwave oven': 4,
-      'Water Purifier': 5,
-
-      // Medium priority - Frequently used appliances
-      'Ceiling & Table Fan': 6,
-      'Air Cooler': 7,
-      'Water Cooler': 8,
-      'Visi Cooler': 9,
-      'Electric Induction': 10,
-
-      // Low priority - Less frequently used appliances
-      'CCTV Camera': 11,
-      'Computer & Laptop': 12,
-      'Home theatre/ Sound box': 13,
-      'Inverter Batteries': 14,
-      'Vacuum cleaner': 15,
-      'Deep Freezer': 16,
-    };
-
-    // Return priority if found, otherwise assign a very high number for new/unlisted categories
-    return priorityOrder[categoryName] || 999;
-  };
-
   const fetchServices = async () => {
     try {
       setLoading(true);
-      const { data } = await getAllServices();
+      const [{ data: servicesData }, { data: categoriesData }] = await Promise.all([
+        getAllServices(),
+        getAllCategories()
+      ]);
 
-      // Transform services into categories
-      const categoryMap = new Map<string, Category>();
+      // Group services by category name
+      const serviceMap = new Map<string, any[]>();
+      servicesData.forEach((service: any) => {
+        if (!serviceMap.has(service.category)) {
+          serviceMap.set(service.category, []);
+        }
+        serviceMap.get(service.category)!.push(service);
+      });
 
-      // Category name to ID mapping
-      const categoryToId = (name: string): string => {
-        const mapping: Record<string, string> = {
-          'Air Conditioner': 'air-conditioner',
-          'Ceiling & Table Fan': 'ceiling-table-fan',
-          'Water Purifier': 'water-purifier',
-          'Visi Cooler': 'visi-cooler',
-          'Water Cooler': 'water-cooler',
-          'Air Cooler': 'air-cooler',
-          'CCTV Camera': 'cctv-camera',
-          'Computer & Laptop': 'computer-laptop',
-          'Microwave oven': 'microwave-oven',
-          'Electric Induction': 'electric-induction',
-          'Home theatre/ Sound box': 'home-theatre-sound-box',
-          'Inverter Batteries': 'inverter-batteries',
-          'Vacuum cleaner': 'vacuum-cleaner',
-          'Washing Machine': 'washing-machine',
-          'Deep Freezer': 'deep-freezer',
-          'Refrigerator': 'refrigerator', // Added refrigerator mapping
-        };
-        return mapping[name] || name.toLowerCase().replace(/\s+/g, '-').replace(/[&/]/g, '-');
-      };
+      const finalCategories: Category[] = [];
+      const processedCategoryNames = new Set<string>();
 
-      data.forEach((service: any) => {
-        if (!categoryMap.has(service.category)) {
-          categoryMap.set(service.category, {
-            id: categoryToId(service.category),
-            title: service.category,
-            description: service.description,
-            imageUrl: service.imageUrl,
-            services: [],
-          });
+      // 1. Process DB Categories (Preserve DB Order)
+      categoriesData.forEach((cat: any) => {
+        const catServicesDocs = serviceMap.get(cat.name) || [];
+
+        // Flatten all sub-services from all Service documents in this category
+        const allSubServices = catServicesDocs.flatMap((service: any) =>
+          (service.subServices || []).map((subService: any, idx: number) => ({
+            id: `${service._id}-${idx}`,
+            name: subService.name,
+            description: subService.description,
+            price: subService.price,
+            estimatedTime: '',
+            imageUrl: subService.imageUrl,
+            issuesResolved: subService.issuesResolved || [],
+          }))
+        );
+
+        // Determine Category Image: Use DB image, or fallback to first service image
+        let catImage = cat.imageUrl;
+        if (!catImage && catServicesDocs.length > 0) {
+          const serviceWithImage = catServicesDocs.find((s: any) => s.imageUrl);
+          if (serviceWithImage) {
+            catImage = serviceWithImage.imageUrl;
+          }
         }
 
-        const category = categoryMap.get(service.category)!;
-        // Transform sub-services to services
-        const transformedServices = (service.subServices || []).map((subService: any, idx: number) => ({
-          id: `${service._id}-${idx}`,
-          name: subService.name,
-          description: subService.description,
-          price: subService.price,
-          estimatedTime: '',
-          imageUrl: subService.imageUrl,
-          issuesResolved: subService.issuesResolved || [],
-        }));
-
-        category.services.push(...transformedServices);
+        finalCategories.push({
+          id: cat._id,
+          title: cat.name,
+          description: cat.description || 'Professional services',
+          imageUrl: catImage || '', // Fallback to empty string if no image found at all
+          services: allSubServices,
+        });
+        processedCategoryNames.add(cat.name);
       });
 
-      // Convert Map to array and sort by priority
-      const categoriesArray = Array.from(categoryMap.values());
-      const sortedCategories = categoriesArray.sort((a, b) => {
-        const priorityA = getCategoryPriority(a.title);
-        const priorityB = getCategoryPriority(b.title);
-        return priorityA - priorityB; // Lower number = higher priority
+      // 2. Handle Orphaned Categories (Services with categories not in DB)
+      // These will be appended at the end
+      serviceMap.forEach((services, catName) => {
+        if (!processedCategoryNames.has(catName)) {
+          const allSubServices = services.flatMap((service: any) =>
+            (service.subServices || []).map((subService: any, idx: number) => ({
+              id: `${service._id}-${idx}`,
+              name: subService.name,
+              description: subService.description,
+              price: subService.price,
+              estimatedTime: '',
+              imageUrl: subService.imageUrl,
+              issuesResolved: subService.issuesResolved || [],
+            }))
+          );
+
+          finalCategories.push({
+            id: catName.toLowerCase().replace(/\s+/g, '-'),
+            title: catName,
+            description: services[0]?.description || 'Professional services',
+            imageUrl: services[0]?.imageUrl || '',
+            services: allSubServices,
+          });
+        }
       });
 
-      setCategories(sortedCategories);
+      setCategories(finalCategories);
     } catch (error) {
       console.error('Failed to load services:', error);
-      // Fallback to empty array
       setCategories([]);
     } finally {
       setLoading(false);
@@ -140,15 +127,13 @@ const HomePage: React.FC = () => {
 
       {/* Service Categories Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-12 sm:mb-20">
-          <div className="space-y-4 text-center lg:text-left">
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-10">
+          <div className="text-center lg:text-left">
             <div className="inline-flex items-center gap-2 bg-indigo-50 px-4 py-1.5 rounded-full border border-indigo-100">
               <Zap size={14} className="text-indigo-600 fill-indigo-600" />
               <span className="text-indigo-600 font-black text-[10px] uppercase tracking-widest">Premium Categories</span>
             </div>
-            <h2 className="text-4xl sm:text-5xl lg:text-7xl font-black text-slate-900 tracking-tighter leading-[1.05]">
-              Expert repairs <br className="hidden sm:block" /> <span className="text-slate-400">made simple.</span>
-            </h2>
+           
           </div>
         </div>
 

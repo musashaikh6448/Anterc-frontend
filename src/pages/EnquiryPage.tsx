@@ -6,7 +6,7 @@ import { cities, CityData } from '@/data/indianCities';
 import { useAuth } from '../AuthContext';
 import { toast } from 'sonner';
 import { createEnquiry } from '@/api/customerApi';
-import { getServicesByCategory } from '@/api/serviceApi';
+import { getServicesByCategory, getAllCategories } from '@/api/serviceApi';
 
 const EnquiryPage: React.FC = () => {
   const { categoryId, serviceId } = useParams<{ categoryId: string; serviceId: string }>();
@@ -28,6 +28,7 @@ const EnquiryPage: React.FC = () => {
     pincode: '',
     brand: '',
     issue: '',
+    bookedFor: 'myself'
   });
 
   const [cityQuery, setCityQuery] = useState('');
@@ -84,29 +85,46 @@ const EnquiryPage: React.FC = () => {
     try {
       setLoading(true);
       // Convert URL id back to category name
-      const categoryNameMap: Record<string, string> = {
-        'air-conditioner': 'Air Conditioner',
-        'ceiling-table-fan': 'Ceiling & Table Fan',
-        'water-purifier': 'Water Purifier',
-        'visi-cooler': 'Visi Cooler',
-        'water-cooler': 'Water Cooler',
-        'air-cooler': 'Air Cooler',
-        'cctv-camera': 'CCTV Camera',
-        'computer-laptop': 'Computer & Laptop',
-        'microwave-oven': 'Microwave oven',
-        'electric-induction': 'Electric Induction',
-        'air-purifier': 'Air Purifier',
-        'home-theatre-sound-box': 'Home theatre/ Sound box',
-        'inverter-batteries': 'Inverter Batteries',
-        'vacuum-cleaner': 'Vacuum cleaner',
-        'washing-machine': 'Washing Machine',
-        'deep-freezer': 'Deep Freezer',
-      };
+      let categoryName = '';
 
-      const categoryName = categoryNameMap[categoryId] ||
-        categoryId.split('-')
-          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-          .join(' ');
+      // Try to find category by ID from all categories first
+      try {
+        const { data: allCategories } = await getAllCategories();
+        const matched = allCategories.find((cat: any) =>
+          cat._id === categoryId || cat.name.toLowerCase().replace(/\s+/g, '-').replace(/[&/]/g, '-') === categoryId
+        );
+        if (matched) {
+          categoryName = matched.name;
+        }
+      } catch (err) {
+        console.error("Failed to fetch categories list", err);
+      }
+
+      // Fallback: Legacy slug parsing if not found
+      if (!categoryName) {
+        const categoryNameMap: Record<string, string> = {
+          'air-conditioner': 'Air Conditioner',
+          'ceiling-table-fan': 'Ceiling & Table Fan',
+          'water-purifier': 'Water Purifier',
+          'visi-cooler': 'Visi Cooler',
+          'water-cooler': 'Water Cooler',
+          'air-cooler': 'Air Cooler',
+          'cctv-camera': 'CCTV Camera',
+          'computer-laptop': 'Computer & Laptop',
+          'microwave-oven': 'Microwave oven',
+          'electric-induction': 'Electric Induction',
+          'air-purifier': 'Air Purifier',
+          'home-theatre-sound-box': 'Home theatre/ Sound box',
+          'inverter-batteries': 'Inverter Batteries',
+          'vacuum-cleaner': 'Vacuum cleaner',
+          'washing-machine': 'Washing Machine',
+          'deep-freezer': 'Deep Freezer',
+        };
+        categoryName = categoryNameMap[categoryId] ||
+          categoryId.split('-')
+            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+      }
 
       const { data } = await getServicesByCategory(categoryName);
 
@@ -234,7 +252,8 @@ const EnquiryPage: React.FC = () => {
         city: formData.city,
         state: formData.state,
         pincode: formData.pincode,
-        brand: formData.brand
+        brand: formData.brand,
+        bookedFor: formData.bookedFor
       });
       toast.success('Enquiry sent successfully!');
       navigate('/success');
@@ -298,6 +317,31 @@ const EnquiryPage: React.FC = () => {
 
           <form onSubmit={handleSubmit} className="relative z-10 space-y-8 sm:space-y-12">
             <div className="space-y-6 sm:space-y-10">
+
+              {/* Booked For Switch */}
+              <div className="bg-slate-50 p-1.5 rounded-2xl flex w-full">
+                <button
+                  type="button"
+                  onClick={() => setFormData({ ...formData, bookedFor: 'myself' })}
+                  className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all ${formData.bookedFor === 'myself'
+                    ? 'bg-white text-indigo-600 shadow-sm'
+                    : 'text-slate-500 hover:text-slate-700'
+                    }`}
+                >
+                  For Myself
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFormData({ ...formData, bookedFor: 'others' })}
+                  className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all ${formData.bookedFor === 'others'
+                    ? 'bg-white text-indigo-600 shadow-sm'
+                    : 'text-slate-500 hover:text-slate-700'
+                    }`}
+                >
+                  For Someone Else
+                </button>
+              </div>
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-8">
                 <div className="group space-y-2 sm:space-y-3">
                   <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] group-focus-within:text-indigo-600 transition-colors">
@@ -308,7 +352,7 @@ const EnquiryPage: React.FC = () => {
                     name="fullName"
                     value={formData.fullName}
                     onChange={handleChange}
-                    placeholder="Enter full name"
+                    placeholder={formData.bookedFor === 'myself' ? "Enter full name" : "Enter friend's full name"}
                     className="w-full px-5 sm:px-8 py-4 sm:py-5 bg-slate-50 border border-slate-100 rounded-xl sm:rounded-2xl focus:bg-white focus:ring-4 focus:ring-indigo-100/50 focus:border-indigo-500 focus:outline-none text-sm sm:text-base font-bold transition-all placeholder:text-slate-300"
                   />
                 </div>

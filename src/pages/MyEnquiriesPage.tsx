@@ -59,167 +59,196 @@ const MyEnquiriesPage: React.FC = () => {
   const getStatusStyle = (status: string) => {
     switch (status?.toLowerCase()) {
       case 'completed':
-        return 'bg-emerald-50 text-emerald-600 border-emerald-100';
+        return 'bg-emerald-50 text-emerald-700 border-emerald-200';
       case 'technician assigned':
-        return 'bg-indigo-50 text-indigo-600 border-indigo-100';
+        return 'bg-blue-50 text-blue-700 border-blue-200';
       case 'cancelled':
-        return 'bg-rose-50 text-rose-600 border-rose-100';
+        return 'bg-rose-50 text-rose-700 border-rose-200';
       case 'pending':
       default:
-        return 'bg-amber-50 text-amber-600 border-amber-100';
+        return 'bg-amber-50 text-amber-700 border-amber-200';
     }
   };
 
   const getStatusIcon = (status: string) => {
     switch (status?.toLowerCase()) {
       case 'completed':
-        return <CheckCircle2 size={14} strokeWidth={3} />;
+        return <CheckCircle2 size={14} className="stroke-current" />;
       case 'technician assigned':
-        return <Package size={14} strokeWidth={3} />;
+        return <UserCog size={14} className="stroke-current" />;
       case 'cancelled':
-        return <AlertCircle size={14} strokeWidth={3} />;
+        return <AlertCircle size={14} className="stroke-current" />;
       case 'pending':
       default:
-        return <Clock size={14} strokeWidth={3} />;
+        return <Clock size={14} className="stroke-current" />;
     }
   };
 
   return (
-    <div className="min-h-screen bg-white pb-32">
-      <div className="max-w-4xl mx-auto px-4 py-12">
+    <div className="min-h-screen bg-slate-50 pb-32">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-12">
 
-        {/* BACK BUTTON */}
-        <button
-          onClick={() => navigate('/')}
-          className="inline-flex items-center gap-2 text-slate-400 hover:text-indigo-600 transition-colors mb-12 font-bold text-xs uppercase tracking-widest"
-        >
-          <ChevronLeft size={16} strokeWidth={3} />
-          Back to Services
-        </button>
-
-        {/* HEADER */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
+        {/* HEADER SECTION */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10">
           <div>
-            <span className="text-indigo-600 font-bold text-xs uppercase tracking-[0.3em]">
-              History
-            </span>
-            <h1 className="text-4xl sm:text-5xl font-black text-slate-900">
+            <button
+              onClick={() => navigate('/')}
+              className="inline-flex items-center gap-2 text-slate-500 hover:text-indigo-600 transition-colors mb-4 text-sm font-semibold"
+            >
+              <ChevronLeft size={18} />
+              Back to Services
+            </button>
+            <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight">
               My Enquiries
             </h1>
+            <p className="text-slate-500 mt-2">
+              Manage and track your service requests
+            </p>
           </div>
-          <p className="text-slate-400 font-medium">
-            Tracking {enquiries.length} service requests
-          </p>
+
+          <div className="bg-white px-4 py-2 rounded-xl border border-slate-200 shadow-sm">
+            <span className="text-slate-600 text-sm font-medium">Total Requests: </span>
+            <span className="text-indigo-600 font-bold">{enquiries.length}</span>
+          </div>
         </div>
 
-        {/* LIST */}
+        {/* ENQUIRIES LIST */}
         {enquiries.length > 0 ? (
           <div className="grid gap-6">
-            {enquiries.map((enquiry, idx) => (
+            {enquiries.map((enquiry) => (
               <div
                 key={enquiry._id}
-                className="bg-white rounded-[2rem] p-8 border border-slate-200 hover:border-indigo-200 hover:shadow-xl transition-all"
+                className="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden"
               >
-                <div className="space-y-5">
-
-                  {/* TOP */}
-                  <div className="flex flex-wrap gap-4 items-center">
-                    <span className="px-3 py-1 bg-slate-100 rounded-full text-[10px] font-black text-slate-500 uppercase tracking-widest">
-                      {enquiry._id?.slice(-6)}
+                {/* CARD HEADER */}
+                <div className="bg-slate-50/50 px-6 py-4 border-b border-slate-100 flex flex-wrap justify-between items-center gap-4">
+                  <div className="flex items-center gap-3">
+                    <span className="bg-white p-2 rounded-lg border border-slate-200 shadow-sm text-indigo-600">
+                      <Package size={20} />
                     </span>
-
-                    <span
-                      className={`flex items-center gap-2 px-4 py-1.5 rounded-2xl border text-[10px] font-black uppercase tracking-widest ${getStatusStyle(enquiry.status)}`}
-                    >
-                      {getStatusIcon(enquiry.status)}
-                      {enquiry.status}
-                    </span>
-
-                    {enquiry.invoiceUrl && (
-                      <a
-                        href={enquiry.invoiceUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 px-3 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-full text-[10px] font-black uppercase tracking-widest transition-colors"
-                      >
-                        <Download size={14} className="stroke-[3]" />
-                        Invoice
-                      </a>
-                    )}
+                    <div>
+                      <h3 className="font-bold text-slate-900 text-lg leading-tight">
+                        {enquiry.serviceType}
+                      </h3>
+                      <div className="flex items-center gap-2 text-xs text-slate-500 mt-0.5">
+                        <span className="font-mono">#{enquiry._id?.slice(-6).toUpperCase()}</span>
+                        <span>•</span>
+                        <span>{new Date(enquiry.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+                      </div>
+                    </div>
                   </div>
+
+                  <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold border ${getStatusStyle(enquiry.status)}`}>
+                    {getStatusIcon(enquiry.status)}
+                    <span className="capitalize">{enquiry.status}</span>
+                  </div>
+                </div>
+
+                {/* CARD BODY */}
+                <div className="p-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+                    {/* DETAILS COLUMN */}
+                    <div className="space-y-4">
+                      <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Service Details</h4>
+
+                      <div className="flex items-start gap-3">
+                        <Smartphone size={18} className="text-slate-400 mt-0.5" />
+                        <div>
+                          <p className="text-sm font-medium text-slate-700">Appliance</p>
+                          <p className="text-slate-900 font-semibold">
+                            {enquiry.applianceType}
+                            {enquiry.brand && <span className="text-slate-500 font-normal"> • {enquiry.brand}</span>}
+                          </p>
+                        </div>
+                      </div>
+
+                      {enquiry.message && (
+                        <div className="flex items-start gap-3">
+                          <MessageSquare size={18} className="text-slate-400 mt-0.5" />
+                          <div>
+                            <p className="text-sm font-medium text-slate-700">Description</p>
+                            <p className="text-slate-600 text-sm leading-relaxed mt-1 bg-slate-50 p-3 rounded-lg border border-slate-100">
+                              {enquiry.message}
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* LOCATION COLUMN */}
+                    <div className="space-y-4">
+                      <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Location</h4>
+
+                      {(enquiry.city || enquiry.address) ? (
+                        <div className="flex items-start gap-3">
+                          <MapPin size={18} className="text-slate-400 mt-0.5" />
+                          <div>
+                            <p className="text-sm font-medium text-slate-700">Service Address</p>
+                            <div className="text-slate-600 text-sm mt-1">
+                              {enquiry.address && <p>{enquiry.address}</p>}
+                              <p>
+                                {enquiry.city}{enquiry.state ? `, ${enquiry.state}` : ''}
+                                {enquiry.pincode && ` - ${enquiry.pincode}`}
+                              </p>
+                              {enquiry.landmark && (
+                                <p className="text-indigo-600 text-xs font-medium mt-1">
+                                  Near {enquiry.landmark}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="text-slate-400 text-sm italic">No address details provided</div>
+                      )}
+                    </div>
+
+                  </div>
+                </div>
+
+                {/* CARD FOOTER Actions */}
+                <div className="col-span-1 md:col-span-2 px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
+                  {enquiry.invoiceUrl && (
+                    <a
+                      href={enquiry.invoiceUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-white text-slate-700 text-sm font-medium rounded-lg border border-slate-200 hover:bg-slate-50 hover:text-indigo-600 hover:border-indigo-200 transition-all"
+                    >
+                      <Download size={16} />
+                      Invoice
+                    </a>
+                  )}
 
                   <a
                     href="tel:+917385650510"
-                    className="flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-700 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-indigo-100 transition-colors border border-indigo-100"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 shadow-sm shadow-indigo-200 transition-all"
                   >
-                    <Phone size={14} className="stroke-[3]" />
-                    Call Support
+                    <Phone size={16} />
+                    Support
                   </a>
                 </div>
-
-                {/* TITLE */}
-                <h3 className="text-2xl font-black text-slate-900">
-                  {enquiry.serviceType}
-                </h3>
-
-                {/* META */}
-                <div className="flex flex-wrap gap-6">
-                  <div className="flex items-center gap-2">
-                    <Smartphone size={14} className="text-slate-400" />
-                    <span className="text-xs font-bold text-slate-500">
-                      {enquiry.applianceType} {enquiry.brand && <span className="font-normal text-slate-400">({enquiry.brand})</span>}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <Clock size={14} className="text-slate-400" />
-                    <span className="text-xs font-bold text-slate-500">
-                      {new Date(enquiry.createdAt).toLocaleDateString()}
-                    </span>
-                  </div>
-
-                  {(enquiry.city || enquiry.address) && (
-                    <div className="flex items-start gap-2 max-w-[50%]">
-                      <MapPin size={14} className="text-slate-400 mt-0.5 shrink-0" />
-                      <div className="flex flex-col">
-                        <span className="text-xs font-bold text-slate-500">
-                          {enquiry.city}{enquiry.state ? `, ${enquiry.state}` : ''} {enquiry.pincode && `- ${enquiry.pincode}`}
-                        </span>
-                        {enquiry.address && <span className="text-[10px] text-slate-400 leading-tight mt-0.5">{enquiry.address}</span>}
-                        {enquiry.landmark && <span className="text-[10px] text-indigo-500 font-medium mt-0.5">Near {enquiry.landmark}</span>}
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* MESSAGE */}
-                {enquiry.message && (
-                  <div className="bg-slate-50 rounded-2xl p-4 border text-sm text-slate-600 whitespace-pre-line">
-                    <div className="flex items-center gap-2 mb-2 text-slate-400 font-bold text-xs uppercase">
-                      <MessageSquare size={14} />
-                      Enquiry Details
-                    </div>
-                    {enquiry.message.trim()}
-                  </div>
-                )}
 
               </div>
             ))}
           </div>
         ) : (
-          <div className="text-center py-24 bg-slate-50 rounded-[3rem] border border-dashed">
-            <Package size={40} className="mx-auto text-slate-300 mb-6" />
-            <h3 className="text-2xl font-black text-slate-900">
-              Empty Inbox
+          <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-slate-300">
+            <div className="bg-slate-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Package size={32} className="text-slate-400" />
+            </div>
+            <h3 className="text-xl font-bold text-slate-900">
+              No Enquiries Found
             </h3>
-            <p className="text-slate-400 mt-2">
-              You haven't made any service enquiries yet.
+            <p className="text-slate-500 mt-2 max-w-sm mx-auto">
+              You haven't submitted any service requests yet. Book a service to get started!
             </p>
             <button
               onClick={() => navigate('/')}
-              className="mt-10 px-10 py-5 bg-indigo-600 text-white font-extrabold rounded-2xl hover:bg-indigo-700 transition"
+              className="mt-6 px-6 py-3 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 transition shadow-lg shadow-indigo-100"
             >
-              Book First Service
+              Book a Service
             </button>
           </div>
         )}

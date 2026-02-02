@@ -3,7 +3,32 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ChevronLeft, ArrowRight, Star, HelpCircle, BadgeCheck, ChevronDown, CheckCircle2 } from 'lucide-react';
 import ImageWithSkeleton from '../components/ImageWithSkeleton';
-import { getServicesByCategory } from '@/api/serviceApi';
+import { getServicesByCategory, getAllCategories } from '@/api/serviceApi';
+
+// ... (keep component start)
+
+// Helper function to generate slug from name (consistent with HomePage)
+const generateSlug = (name: string): string => {
+  const mapping: Record<string, string> = {
+    'Air Conditioner': 'air-conditioner',
+    'Ceiling & Table Fan': 'ceiling-table-fan',
+    'Water Purifier': 'water-purifier',
+    'Visi Cooler': 'visi-cooler',
+    'Water Cooler': 'water-cooler',
+    'Air Cooler': 'air-cooler',
+    'CCTV Camera': 'cctv-camera',
+    'Computer & Laptop': 'computer-laptop',
+    'Microwave oven': 'microwave-oven',
+    'Electric Induction': 'electric-induction',
+    'Home theatre/ Sound box': 'home-theatre-sound-box',
+    'Inverter Batteries': 'inverter-batteries',
+    'Vacuum cleaner': 'vacuum-cleaner',
+    'Washing Machine': 'washing-machine',
+    'Deep Freezer': 'deep-freezer',
+    'Refrigerator': 'refrigerator',
+  };
+  return mapping[name] || name.toLowerCase().replace(/\s+/g, '-').replace(/[&/]/g, '-');
+};
 
 const CategoryDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -14,7 +39,9 @@ const CategoryDetailsPage: React.FC = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    fetchCategoryServices();
+    if (id) {
+      fetchCategoryServices();
+    }
   }, [id]);
 
   const fetchCategoryServices = async () => {
@@ -22,41 +49,62 @@ const CategoryDetailsPage: React.FC = () => {
 
     try {
       setLoading(true);
-      // Convert URL id back to category name
-      // Handle special cases like "home-theatre-sound-box" -> "Home theatre/ Sound box"
-      const categoryNameMap: Record<string, string> = {
-        'air-conditioner': 'Air Conditioner',
-        'ceiling-table-fan': 'Ceiling & Table Fan',
-        'water-purifier': 'Water Purifier',
-        'visi-cooler': 'Visi Cooler',
-        'water-cooler': 'Water Cooler',
-        'air-cooler': 'Air Cooler',
-        'cctv-camera': 'CCTV Camera',
-        'computer-laptop': 'Computer & Laptop',
-        'microwave-oven': 'Microwave oven',
-        'electric-induction': 'Electric Induction',
-        'air-purifier': 'Air Purifier',
-        'home-theatre-sound-box': 'Home theatre/ Sound box',
-        'inverter-batteries': 'Inverter Batteries',
-        'vacuum-cleaner': 'Vacuum cleaner',
-        'washing-machine': 'Washing Machine',
-        'deep-freezer': 'Deep Freezer',
-      };
 
-      const categoryName = categoryNameMap[id] ||
-        id.split('-')
-          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-          .join(' ');
+      // 1. Fetch all categories to find the matching one by ID (slug)
+      let matchedCategoryName = '';
+      let matchedCategoryDetails: any = null;
 
-      const { data } = await getServicesByCategory(categoryName);
+      try {
+        const { data: allCategories } = await getAllCategories();
+        const matched = allCategories.find((cat: any) =>
+          cat._id === id || generateSlug(cat.name) === id
+        );
+        if (matched) {
+          matchedCategoryName = matched.name;
+          matchedCategoryDetails = matched; // contains description, imageUrl from DB
+        }
+      } catch (err) {
+        console.error("Failed to fetch dynamic categories", err);
+      }
+
+      // 2. Fallback to legacy slug parsing if not found in DB
+      if (!matchedCategoryName) {
+        const categoryNameMap: Record<string, string> = {
+          'air-conditioner': 'Air Conditioner',
+          'ceiling-table-fan': 'Ceiling & Table Fan',
+          'water-purifier': 'Water Purifier',
+          'visi-cooler': 'Visi Cooler',
+          'water-cooler': 'Water Cooler',
+          'air-cooler': 'Air Cooler',
+          'cctv-camera': 'CCTV Camera',
+          'computer-laptop': 'Computer & Laptop',
+          'microwave-oven': 'Microwave oven',
+          'electric-induction': 'Electric Induction',
+          'air-purifier': 'Air Purifier',
+          'home-theatre-sound-box': 'Home theatre/ Sound box',
+          'inverter-batteries': 'Inverter Batteries',
+          'vacuum-cleaner': 'Vacuum cleaner',
+          'washing-machine': 'Washing Machine',
+          'deep-freezer': 'Deep Freezer',
+        };
+        matchedCategoryName = categoryNameMap[id] ||
+          id.split('-')
+            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+      }
+
+      console.log(`Fetching services for: ${matchedCategoryName}`);
+
+      const { data } = await getServicesByCategory(matchedCategoryName);
 
       if (data.length > 0) {
+        // Use DB details if available, otherwise first service details
         const firstService = data[0];
         setCategory({
           id: id,
-          title: firstService.category,
-          description: firstService.description,
-          imageUrl: firstService.imageUrl,
+          title: matchedCategoryDetails?.name || firstService.category,
+          description: matchedCategoryDetails?.description || firstService.description,
+          imageUrl: matchedCategoryDetails?.imageUrl || firstService.imageUrl,
         });
 
         // Flatten sub-services from all services in this category
@@ -68,6 +116,7 @@ const CategoryDetailsPage: React.FC = () => {
               name: subService.name,
               description: subService.description,
               price: subService.price,
+              actualPrice: subService.actualPrice, // Add actualPrice mapping
               estimatedTime: '',
               imageUrl: subService.imageUrl,
               issuesResolved: subService.issuesResolved || [],
@@ -77,6 +126,17 @@ const CategoryDetailsPage: React.FC = () => {
         });
 
         setServices(allSubServices);
+      } else {
+        // If no services, but we have category details (from DB), show them?
+        // For now, if no services, we consider "Category not found" or empty.
+        if (matchedCategoryDetails) {
+          setCategory({
+            id: id,
+            title: matchedCategoryDetails.name,
+            description: matchedCategoryDetails.description,
+            imageUrl: matchedCategoryDetails.imageUrl
+          });
+        }
       }
     } catch (error) {
       console.error('Failed to load category services:', error);
@@ -175,13 +235,19 @@ const CategoryDetailsPage: React.FC = () => {
                       </div>
 
                       <div className="mt-4 sm:mt-8 flex items-center justify-between border-t border-slate-50 pt-4 sm:pt-6">
+                        <div className="flex flex-col">
+                          {service.actualPrice && (
+                            <span className="text-xs text-slate-400 line-through decoration-rose-500/50 decoration-2 font-medium">₹{service.actualPrice}</span>
+                          )}
+                          {service.price && (
+                            <span className="text-xl sm:text-2xl font-black text-slate-900">₹{service.price}</span>
+                          )}
+                        </div>
 
                         <Link
                           to={`/enquiry/${category.id}/${service.id}`}
                           onClick={(e) => {
                             e.stopPropagation();
-                            // Check if user is logged in, if not, redirect to auth
-                            // This will be handled by EnquiryPage, but we can add a check here too
                           }}
                           className="px-6 py-3 sm:px-8 sm:py-4 bg-slate-900 text-white font-black text-[10px] sm:text-xs rounded-2xl hover:bg-indigo-600 transition-all shadow-xl"
                         >

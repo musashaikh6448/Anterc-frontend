@@ -10,7 +10,8 @@ import {
   Menu,
   X,
   Sparkles,
-  Mail
+  Mail,
+  Grid
 } from 'lucide-react';
 import { useAuth } from '../../AuthContext';
 import { toast } from 'sonner';
@@ -38,6 +39,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
     { icon: UserCog, label: 'Technicians', path: '/admin/technicians' },
     { icon: Users, label: 'Customers', path: '/admin/customers' },
     { icon: UserCog, label: 'Admins', path: '/admin/admins' },
+    { icon: Grid, label: 'Categories', path: '/admin/categories' },
     { icon: Sparkles, label: 'Services', path: '/admin/services' },
     { icon: Palette, label: 'Theme', path: '/admin/theme' },
   ];

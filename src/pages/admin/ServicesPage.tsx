@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, Search, Sparkles, Filter, X, ChevronDown, ChevronUp } from 'lucide-react';
+import { Plus, Edit, Trash2, Search, Sparkles, Filter, X, ChevronDown, ChevronUp, GripVertical } from 'lucide-react';
 import { toast } from 'sonner';
 import Pagination from '@/components/admin/Pagination';
 import Modal from '@/components/admin/Modal';
@@ -10,39 +10,274 @@ import {
   createService,
   updateService,
   deleteService,
+  getAllCategoriesAdmin
 } from '@/api/adminApi';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+  useSortable
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
-const CATEGORIES = [
-  'Air Conditioner',
-  'Electrician',
-  'Plumbing',
-  'Washing Machine',
-  'TV',
-  'Refrigerator',
-  'Deep Freezer',
-  'Ceiling & Table Fan',
-  'Water Purifier',
-  'Dishwasher',
-  'Dispenser',
-  'Visi Cooler',
-  'Water Cooler',
-  'Air Cooler',
-  'CCTV Camera',
-  'Computer & Laptop',
-  'Printer',
-  'Stabilizer',
-  'Chimneys',
-  'Microwave oven',
-  'Electric Induction',
-  'Air Purifier',
-  'Geysers',
-  'Home theatre/ Sound box',
-  'Inverter Batteries',
-  'Vacuum cleaner',
-];
+
+
+// Sortable Sub Service Item
+const SortableSubServiceItem = ({
+  subService,
+  index,
+  isExpanded,
+  toggleExpand,
+  updateSubService,
+  removeSubService,
+  addIssueResolved,
+  removeIssueResolved
+}: any) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging
+  } = useSortable({ id: `sub-${index}` });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    zIndex: isDragging ? 1000 : 1,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  const issuesCount = subService.issuesResolved?.length || 0;
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className="bg-slate-50 border border-slate-200 rounded-lg sm:rounded-xl overflow-hidden mb-3"
+    >
+      {/* Accordion Header */}
+      <div className="flex items-center">
+        <div
+          {...attributes}
+          {...listeners}
+          className="p-3 sm:p-4 text-slate-400 cursor-move hover:text-indigo-600 border-r border-slate-200 bg-white"
+        >
+          <GripVertical size={20} />
+        </div>
+
+        <button
+          type="button"
+          onClick={() => toggleExpand(index)}
+          className="flex-1 p-3 sm:p-4 flex items-center justify-between gap-3 hover:bg-slate-100 transition-colors text-left"
+        >
+          <div className="flex items-center gap-3 flex-1 min-w-0">
+            {/* Sub-Service Thumbnail */}
+            {subService.imageUrl ? (
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg overflow-hidden bg-white border border-slate-200 flex-shrink-0">
+                <img
+                  src={subService.imageUrl}
+                  alt={subService.name || `Sub-Service ${index + 1}`}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = 'https://via.placeholder.com/100x100?text=No+Image';
+                  }}
+                />
+              </div>
+            ) : (
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-white border border-slate-200 flex items-center justify-center flex-shrink-0">
+                <Sparkles size={14} className="text-slate-400" />
+              </div>
+            )}
+
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-1">
+                <h4 className="text-sm sm:text-base font-black text-slate-900 line-clamp-1">
+                  {subService.name || `Sub-Service ${index + 1}`}
+                </h4>
+                {subService.price && (
+                  <span className="text-xs sm:text-sm font-black text-indigo-600 whitespace-nowrap">
+                    ₹{subService.price}
+                  </span>
+                )}
+              </div>
+              {subService.description && (
+                <p className="text-xs text-slate-500 line-clamp-1 hidden sm:block">
+                  {subService.description}
+                </p>
+              )}
+              {issuesCount > 0 && (
+                <span className="inline-block mt-1 px-2 py-0.5 bg-indigo-100 text-indigo-700 rounded text-[9px] sm:text-[10px] font-bold">
+                  {issuesCount} issue{issuesCount !== 1 ? 's' : ''}
+                </span>
+              )}
+            </div>
+          </div>
+
+          <div className="flex items-center gap-1.5 flex-shrink-0">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                removeSubService(index);
+              }}
+              className="p-1.5 sm:p-2 text-rose-600 hover:bg-rose-50 rounded-lg transition-all"
+              title="Remove"
+            >
+              <X size={14} className="sm:w-4 sm:h-4" />
+            </button>
+            <div className="p-1.5 sm:p-2 text-slate-400">
+              {isExpanded ? (
+                <ChevronUp size={16} className="sm:w-5 sm:h-5" />
+              ) : (
+                <ChevronDown size={16} className="sm:w-5 sm:h-5" />
+              )}
+            </div>
+          </div>
+        </button>
+      </div>
+
+      {/* Accordion Content */}
+      <div
+        className={`overflow-hidden transition-all duration-300 ease-in-out ${isExpanded ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'
+          }`}
+      >
+        <div className="p-3 sm:p-4 pt-0 space-y-3 sm:space-y-4 border-t border-slate-200">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                Name <span className="text-rose-600">*</span>
+              </label>
+              <input
+                type="text"
+                required
+                value={subService.name}
+                onChange={(e) => updateSubService(index, 'name', e.target.value)}
+                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm"
+                placeholder="e.g., Anti-Bacterial Jet Service"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                Offer Price (₹) <span className="text-rose-600">*</span>
+              </label>
+              <input
+                type="number"
+                required
+                min="0"
+                value={subService.price}
+                onChange={(e) => updateSubService(index, 'price', e.target.value)}
+                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm"
+                placeholder="Offer Price"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                Actual Price (₹) <span className="text-slate-400 font-normal">(Optional)</span>
+              </label>
+              <input
+                type="number"
+                min="0"
+                value={subService.actualPrice || ''}
+                onChange={(e) => updateSubService(index, 'actualPrice', e.target.value)}
+                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm"
+                placeholder="MRP"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-1.5">
+              Description <span className="text-rose-600">*</span>
+            </label>
+            <textarea
+              required
+              value={subService.description}
+              onChange={(e) => updateSubService(index, 'description', e.target.value)}
+              className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm resize-none"
+              placeholder="Enter description"
+              rows={2}
+            />
+          </div>
+          <div>
+            <ImageUpload
+              value={subService.imageUrl || ''}
+              onChange={(base64: string) => updateSubService(index, 'imageUrl', base64)}
+              label="Sub-Service Image (Square)"
+              aspectRatio="square"
+            />
+          </div>
+
+          {/* Issues Resolved */}
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-2">
+              What We Resolve
+            </label>
+            <div className="flex flex-wrap gap-2 mb-2">
+              {(subService.issuesResolved || []).map((issue: string, issueIndex: number) => (
+                <span
+                  key={issueIndex}
+                  className="inline-flex items-center gap-1 px-2 sm:px-3 py-1 bg-indigo-100 text-indigo-700 rounded-lg text-xs font-bold"
+                >
+                  {issue}
+                  <button
+                    type="button"
+                    onClick={() => removeIssueResolved(index, issueIndex)}
+                    className="hover:text-rose-600"
+                  >
+                    <X size={12} />
+                  </button>
+                </span>
+              ))}
+            </div>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                placeholder="Add issue (e.g., Low cooling)"
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addIssueResolved(index, e.currentTarget.value);
+                    e.currentTarget.value = '';
+                  }
+                }}
+                className="flex-1 px-3 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm"
+              />
+              <button
+                type="button"
+                onClick={(e) => {
+                  const input = e.currentTarget.previousElementSibling as HTMLInputElement;
+                  if (input.value.trim()) {
+                    addIssueResolved(index, input.value);
+                    input.value = '';
+                  }
+                }}
+                className="px-3 sm:px-4 py-2 bg-indigo-600 text-white rounded-lg font-bold text-sm hover:bg-indigo-700 transition-all whitespace-nowrap"
+              >
+                Add
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const ServicesPage: React.FC = () => {
   const [services, setServices] = useState<any[]>([]);
+  const [categories, setCategories] = useState<any[]>([]); // Dynamic Categories
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
@@ -63,33 +298,27 @@ const ServicesPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  const toggleService = (serviceId: string) => {
-    setExpandedServices(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(serviceId)) {
-        newSet.delete(serviceId);
-      } else {
-        newSet.add(serviceId);
-      }
-      return newSet;
-    });
-  };
-
-  const toggleSubService = (index: number) => {
-    setExpandedSubServices(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(index)) {
-        newSet.delete(index);
-      } else {
-        newSet.add(index);
-      }
-      return newSet;
-    });
-  };
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   useEffect(() => {
     fetchServices();
+    fetchCategories();
   }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const { data } = await getAllCategoriesAdmin();
+      setCategories(data);
+    } catch (error) {
+      console.error('Failed to load categories', error);
+      toast.error('Failed to load categories');
+    }
+  };
 
   const fetchServices = async () => {
     setLoading(true);
@@ -142,6 +371,26 @@ const ServicesPage: React.FC = () => {
     setExpandedSubServices(new Set());
   };
 
+  const toggleService = (id: string) => {
+    const newExpanded = new Set(expandedServices);
+    if (newExpanded.has(id)) {
+      newExpanded.delete(id);
+    } else {
+      newExpanded.add(id);
+    }
+    setExpandedServices(newExpanded);
+  };
+
+  const toggleSubService = (index: number) => {
+    const newExpanded = new Set(expandedSubServices);
+    if (newExpanded.has(index)) {
+      newExpanded.delete(index);
+    } else {
+      newExpanded.add(index);
+    }
+    setExpandedSubServices(newExpanded);
+  };
+
   const handleEdit = (service: any) => {
     setEditingService(service);
     setFormData({
@@ -183,6 +432,7 @@ const ServicesPage: React.FC = () => {
           name: '',
           description: '',
           price: '',
+          actualPrice: '',
           imageUrl: '',
           issuesResolved: [],
         },
@@ -241,11 +491,11 @@ const ServicesPage: React.FC = () => {
   const avgPrice =
     services.length > 0
       ? Math.round(
-          services.reduce((sum, s) => {
-            const subPrices = s.subServices?.map((sub: any) => sub.price || 0) || [];
-            return sum + (subPrices.length > 0 ? subPrices.reduce((a: number, b: number) => a + b, 0) / subPrices.length : 0);
-          }, 0) / services.length
-        )
+        services.reduce((sum, s) => {
+          const subPrices = s.subServices?.map((sub: any) => sub.price || 0) || [];
+          return sum + (subPrices.length > 0 ? subPrices.reduce((a: number, b: number) => a + b, 0) / subPrices.length : 0);
+        }, 0) / services.length
+      )
       : 0;
 
   if (loading) {
@@ -255,6 +505,18 @@ const ServicesPage: React.FC = () => {
       </div>
     );
   }
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (active.id !== over?.id) {
+      const oldIndex = parseInt(active.id.toString().replace('sub-', ''));
+      const newIndex = parseInt(over?.id.toString().replace('sub-', '') || '0');
+
+      const newSubServices = arrayMove(formData.subServices, oldIndex, newIndex);
+      setFormData({ ...formData, subServices: newSubServices });
+    }
+  };
 
   return (
     <div className="space-y-6 sm:space-y-8">
@@ -312,9 +574,9 @@ const ServicesPage: React.FC = () => {
               className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-slate-50 border border-slate-100 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all text-sm sm:text-base font-medium"
             >
               <option value="">Select category</option>
-              {CATEGORIES.map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat}
+              {categories.map((cat) => (
+                <option key={cat._id} value={cat.name}>
+                  {cat.name}
                 </option>
               ))}
             </select>
@@ -374,206 +636,33 @@ const ServicesPage: React.FC = () => {
               </button>
             </div>
 
-            <div className="space-y-2 sm:space-y-3">
-              {formData.subServices.map((subService, index) => {
-                const isExpanded = expandedSubServices.has(index);
-                const issuesCount = subService.issuesResolved?.length || 0;
-                
-                return (
-                  <div
-                    key={index}
-                    className="bg-slate-50 border border-slate-200 rounded-lg sm:rounded-xl overflow-hidden"
-                  >
-                    {/* Accordion Header */}
-                    <button
-                      type="button"
-                      onClick={() => toggleSubService(index)}
-                      className="w-full p-3 sm:p-4 flex items-center justify-between gap-3 hover:bg-slate-100 transition-colors text-left"
-                    >
-                      <div className="flex items-center gap-3 flex-1 min-w-0">
-                        {/* Sub-Service Thumbnail */}
-                        {subService.imageUrl ? (
-                          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg overflow-hidden bg-white border border-slate-200 flex-shrink-0">
-                            <img
-                              src={subService.imageUrl}
-                              alt={subService.name || `Sub-Service ${index + 1}`}
-                              className="w-full h-full object-cover"
-                              onError={(e) => {
-                                (e.target as HTMLImageElement).src = 'https://via.placeholder.com/100x100?text=No+Image';
-                              }}
-                            />
-                          </div>
-                        ) : (
-                          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-white border border-slate-200 flex items-center justify-center flex-shrink-0">
-                            <Sparkles size={14} className="text-slate-400" />
-                          </div>
-                        )}
-
-                        {/* Sub-Service Info */}
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1">
-                            <h4 className="text-sm sm:text-base font-black text-slate-900 line-clamp-1">
-                              {subService.name || `Sub-Service ${index + 1}`}
-                            </h4>
-                            {subService.price && (
-                              <span className="text-xs sm:text-sm font-black text-indigo-600 whitespace-nowrap">
-                                ₹{subService.price}
-                              </span>
-                            )}
-                          </div>
-                          {subService.description && (
-                            <p className="text-xs text-slate-500 line-clamp-1 hidden sm:block">
-                              {subService.description}
-                            </p>
-                          )}
-                          {issuesCount > 0 && (
-                            <span className="inline-block mt-1 px-2 py-0.5 bg-indigo-100 text-indigo-700 rounded text-[9px] sm:text-[10px] font-bold">
-                              {issuesCount} issue{issuesCount !== 1 ? 's' : ''}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Actions & Expand Icon */}
-                      <div className="flex items-center gap-1.5 flex-shrink-0">
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            removeSubService(index);
-                          }}
-                          className="p-1.5 sm:p-2 text-rose-600 hover:bg-rose-50 rounded-lg transition-all"
-                          title="Remove"
-                        >
-                          <X size={14} className="sm:w-4 sm:h-4" />
-                        </button>
-                        <div className="p-1.5 sm:p-2 text-slate-400">
-                          {isExpanded ? (
-                            <ChevronUp size={16} className="sm:w-5 sm:h-5" />
-                          ) : (
-                            <ChevronDown size={16} className="sm:w-5 sm:h-5" />
-                          )}
-                        </div>
-                      </div>
-                    </button>
-
-                    {/* Accordion Content - Expandable */}
-                    <div
-                      className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                        isExpanded ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'
-                      }`}
-                    >
-                      <div className="p-3 sm:p-4 pt-0 space-y-3 sm:space-y-4 border-t border-slate-200">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                          <div>
-                            <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                              Name <span className="text-rose-600">*</span>
-                            </label>
-                            <input
-                              type="text"
-                              required
-                              value={subService.name}
-                              onChange={(e) => updateSubService(index, 'name', e.target.value)}
-                              className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm"
-                              placeholder="e.g., Anti-Bacterial Jet Service"
-                            />
-                          </div>
-
-                          <div>
-                            <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                              Price (₹) <span className="text-rose-600">*</span>
-                            </label>
-                            <input
-                              type="number"
-                              required
-                              min="0"
-                              value={subService.price}
-                              onChange={(e) => updateSubService(index, 'price', e.target.value)}
-                              className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm"
-                              placeholder="Enter price"
-                            />
-                          </div>
-                        </div>
-
-                        <div>
-                          <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                            Description <span className="text-rose-600">*</span>
-                          </label>
-                          <textarea
-                            required
-                            value={subService.description}
-                            onChange={(e) => updateSubService(index, 'description', e.target.value)}
-                            className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm resize-none"
-                            placeholder="Enter description"
-                            rows={2}
-                          />
-                        </div>
-
-                        <div>
-                          <ImageUpload
-                            value={subService.imageUrl || ''}
-                            onChange={(base64) => updateSubService(index, 'imageUrl', base64)}
-                            label="Sub-Service Image (Square)"
-                            aspectRatio="square"
-                          />
-                        </div>
-
-                        {/* Issues Resolved */}
-                        <div>
-                          <label className="block text-xs font-bold text-slate-700 mb-2">
-                            What We Resolve
-                          </label>
-                          <div className="flex flex-wrap gap-2 mb-2">
-                            {(subService.issuesResolved || []).map((issue: string, issueIndex: number) => (
-                              <span
-                                key={issueIndex}
-                                className="inline-flex items-center gap-1 px-2 sm:px-3 py-1 bg-indigo-100 text-indigo-700 rounded-lg text-xs font-bold"
-                              >
-                                {issue}
-                                <button
-                                  type="button"
-                                  onClick={() => removeIssueResolved(index, issueIndex)}
-                                  className="hover:text-rose-600"
-                                >
-                                  <X size={12} />
-                                </button>
-                              </span>
-                            ))}
-                          </div>
-                          <div className="flex gap-2">
-                            <input
-                              type="text"
-                              placeholder="Add issue (e.g., Low cooling)"
-                              onKeyPress={(e) => {
-                                if (e.key === 'Enter') {
-                                  e.preventDefault();
-                                  addIssueResolved(index, e.currentTarget.value);
-                                  e.currentTarget.value = '';
-                                }
-                              }}
-                              className="flex-1 px-3 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm"
-                            />
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                const input = e.currentTarget.previousElementSibling as HTMLInputElement;
-                                if (input.value.trim()) {
-                                  addIssueResolved(index, input.value);
-                                  input.value = '';
-                                }
-                              }}
-                              className="px-3 sm:px-4 py-2 bg-indigo-600 text-white rounded-lg font-bold text-sm hover:bg-indigo-700 transition-all whitespace-nowrap"
-                            >
-                              Add
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext
+                items={formData.subServices.map((_, i) => `sub-${i}`)}
+                strategy={verticalListSortingStrategy}
+              >
+                <div className="space-y-2 sm:space-y-3">
+                  {formData.subServices.map((subService, index) => (
+                    <SortableSubServiceItem
+                      key={`sub-${index}`} // Re-render when index changes to keep it in sync or use unique ID if available
+                      id={`sub-${index}`} // This is just a prop, not sortable ID
+                      index={index}
+                      subService={subService}
+                      isExpanded={expandedSubServices.has(index)}
+                      toggleExpand={toggleSubService}
+                      updateSubService={updateSubService}
+                      removeSubService={removeSubService}
+                      addIssueResolved={addIssueResolved}
+                      removeIssueResolved={removeIssueResolved}
+                    />
+                  ))}
+                </div>
+              </SortableContext>
+            </DndContext>
 
             {formData.subServices.length === 0 && (
               <p className="text-sm text-slate-500 text-center py-4">
@@ -648,9 +737,9 @@ const ServicesPage: React.FC = () => {
               className="pl-12 pr-8 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none appearance-none cursor-pointer font-medium"
             >
               <option value="all">All Categories</option>
-              {CATEGORIES.map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat}
+              {categories.map((cat) => (
+                <option key={cat._id} value={cat.name}>
+                  {cat.name}
                 </option>
               ))}
             </select>
@@ -675,7 +764,7 @@ const ServicesPage: React.FC = () => {
             <Sparkles size={20} strokeWidth={2.5} />
           </div>
           <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Categories</p>
-          <p className="text-3xl sm:text-4xl font-black text-slate-900">{CATEGORIES.length}</p>
+          <p className="text-3xl sm:text-4xl font-black text-slate-900">{categories.length}</p>
         </div>
         <div className="bg-white border border-slate-100 rounded-xl sm:rounded-2xl p-5 sm:p-6 hover:shadow-lg transition-all duration-300">
           <div className="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center mb-3 text-amber-600">
@@ -686,221 +775,208 @@ const ServicesPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Services List - Accordion Layout */}
+      {/* Services List - Grouped by Category */}
       {loading ? (
         <div className="flex items-center justify-center py-20">
           <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
         </div>
       ) : (
-        <div className="space-y-2 sm:space-y-3">
-          {paginatedServices.length > 0 ? (
-            paginatedServices.map((service) => {
-              const isExpanded = expandedServices.has(service._id);
-              const subServicesCount = service.subServices?.length || 0;
-              
-              return (
-                <div
-                  key={service._id}
-                  className="bg-white border border-slate-100 rounded-lg sm:rounded-xl hover:shadow-md transition-all duration-200 overflow-hidden"
-                >
-                  {/* Accordion Header - Always Visible */}
-                  <button
-                    onClick={() => toggleService(service._id)}
-                    className="w-full p-3 sm:p-4 flex items-center justify-between gap-3 hover:bg-slate-50 transition-colors text-left"
-                  >
-                    <div className="flex items-center gap-3 flex-1 min-w-0">
-                      {/* Service Image Thumbnail */}
-                      <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg overflow-hidden bg-slate-50 border border-slate-100 flex-shrink-0">
-                        {service.imageUrl ? (
-                          <img
-                            src={service.imageUrl}
-                            alt={service.title}
-                            className="w-full h-full object-cover"
-                            onError={(e) => {
-                              (e.target as HTMLImageElement).src = 'https://via.placeholder.com/100x100?text=No+Image';
-                            }}
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-slate-100 text-slate-400">
-                            <Sparkles size={16} className="sm:w-5 sm:h-5" />
-                          </div>
-                        )}
-                      </div>
+        <div className="space-y-8 sm:space-y-12">
+          {categories.map((category) => {
+            // Filter services for this category
+            const categoryServices = services.filter(service =>
+              service.category === category.name &&
+              (searchTerm === '' ||
+                service.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                service.description.toLowerCase().includes(searchTerm.toLowerCase()))
+            );
 
-                      {/* Service Info */}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="px-2 py-0.5 bg-indigo-50 text-indigo-600 rounded text-[9px] sm:text-[10px] font-black uppercase tracking-widest">
-                            {service.category}
-                          </span>
-                          {subServicesCount > 0 && (
-                            <span className="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-[9px] sm:text-[10px] font-bold">
-                              {subServicesCount} sub{subServicesCount !== 1 ? 's' : ''}
-                            </span>
-                          )}
-                        </div>
-                        <h3 className="text-sm sm:text-base font-black text-slate-900 mb-0.5 line-clamp-1">
-                          {service.title}
-                        </h3>
-                        <p className="text-xs text-slate-500 line-clamp-1 hidden sm:block">
-                          {service.description}
-                        </p>
-                      </div>
-                    </div>
+            if (categoryServices.length === 0 && searchTerm !== '') return null; // Hide category if no matches during search
 
-                    {/* Actions & Expand Icon */}
-                    <div className="flex items-center gap-1.5 flex-shrink-0">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleEdit(service);
-                        }}
-                        className="p-1.5 sm:p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
-                        title="Edit"
+            return (
+              <div key={category._id} className="space-y-4">
+                {/* Category Header */}
+                <div className="flex items-center gap-3 border-b border-slate-100 pb-2">
+                  <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                    {category.name}
+                  </h2>
+                  <span className="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 text-xs font-bold">
+                    {categoryServices.length}
+                  </span>
+                </div>
+
+                {/* Services Grid/List */}
+                <div className="space-y-2 sm:space-y-3">
+                  {categoryServices.length > 0 ? (
+                    categoryServices.map((service) => (
+                      <div
+                        key={service._id}
+                        className="bg-white border border-slate-100 rounded-lg sm:rounded-xl hover:shadow-md transition-all duration-200 overflow-hidden"
                       >
-                        <Edit size={14} className="sm:w-4 sm:h-4" />
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDeleteClick(service);
-                        }}
-                        className="p-1.5 sm:p-2 text-rose-600 hover:bg-rose-50 rounded-lg transition-all"
-                        title="Delete"
-                      >
-                        <Trash2 size={14} className="sm:w-4 sm:h-4" />
-                      </button>
-                      <div className="p-1.5 sm:p-2 text-slate-400">
-                        {isExpanded ? (
-                          <ChevronUp size={16} className="sm:w-5 sm:h-5" />
-                        ) : (
-                          <ChevronDown size={16} className="sm:w-5 sm:h-5" />
-                        )}
-                      </div>
-                    </div>
-                  </button>
-
-                  {/* Accordion Content - Expandable */}
-                  <div
-                    className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                      isExpanded ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'
-                    }`}
-                  >
-                    <div className="p-3 sm:p-4 pt-0 border-t border-slate-100 space-y-3">
-                      {/* Service Description */}
-                      <div className="pb-2 border-b border-slate-50">
-                        <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                          {service.description}
-                        </p>
-                      </div>
-
-                      {/* Main Service Image */}
-                      <div className="w-full aspect-video rounded-lg overflow-hidden bg-slate-50 border border-slate-100">
-                        {service.imageUrl ? (
-                          <img
-                            src={service.imageUrl}
-                            alt={service.title}
-                            className="w-full h-full object-cover"
-                            onError={(e) => {
-                              (e.target as HTMLImageElement).src = 'https://via.placeholder.com/400x300?text=No+Image';
-                            }}
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-slate-100 text-slate-400">
-                            <Sparkles size={24} />
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Sub-Services */}
-                      {service.subServices && service.subServices.length > 0 ? (
-                        <div className="space-y-2">
-                          <h4 className="text-xs font-black text-slate-700 uppercase tracking-widest flex items-center gap-2">
-                            <Sparkles size={12} />
-                            Sub-Services ({subServicesCount})
-                          </h4>
-                          <div className="space-y-2 max-h-[400px] overflow-y-auto custom-scrollbar pr-2">
-                            {service.subServices.map((subService: any, idx: number) => (
-                              <div
-                                key={idx}
-                                className="bg-slate-50 border border-slate-200 rounded-lg p-2.5 sm:p-3 hover:bg-slate-100 transition-colors"
-                              >
-                                <div className="flex gap-2.5 sm:gap-3">
-                                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg overflow-hidden bg-slate-100 border border-slate-200 flex-shrink-0">
-                                    {subService.imageUrl ? (
-                                      <img
-                                        src={subService.imageUrl}
-                                        alt={subService.name}
-                                        className="w-full h-full object-cover"
-                                        onError={(e) => {
-                                          (e.target as HTMLImageElement).src = 'https://via.placeholder.com/100x100?text=No+Image';
-                                        }}
-                                      />
-                                    ) : (
-                                      <div className="w-full h-full flex items-center justify-center bg-slate-200 text-slate-400">
-                                        <Sparkles size={12} className="sm:w-4 sm:h-4" />
-                                      </div>
-                                    )}
-                                  </div>
-                                  <div className="flex-1 min-w-0">
-                                    <h5 className="font-black text-slate-900 text-xs sm:text-sm mb-1 line-clamp-1">
-                                      {subService.name}
-                                    </h5>
-                                    <p className="text-[10px] sm:text-xs text-slate-600 mb-1.5 line-clamp-2">
-                                      {subService.description}
-                                    </p>
-                                    <div className="flex items-center justify-between gap-2">
-                                      <p className="text-sm sm:text-base font-black text-slate-900">₹{subService.price || 0}</p>
-                                      {subService.issuesResolved && subService.issuesResolved.length > 0 && (
-                                        <span className="px-1.5 sm:px-2 py-0.5 bg-indigo-100 text-indigo-700 rounded text-[8px] sm:text-[9px] font-bold whitespace-nowrap">
-                                          {subService.issuesResolved.length} issue{subService.issuesResolved.length !== 1 ? 's' : ''}
-                                        </span>
-                                      )}
-                                    </div>
-                                  </div>
+                        {/* Accordion Header - Always Visible */}
+                        <button
+                          onClick={() => toggleService(service._id)}
+                          className="w-full p-3 sm:p-4 flex items-center justify-between gap-3 hover:bg-slate-50 transition-colors text-left"
+                        >
+                          <div className="flex items-center gap-3 flex-1 min-w-0">
+                            {/* Service Image Thumbnail */}
+                            <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg overflow-hidden bg-slate-50 border border-slate-100 flex-shrink-0">
+                              {service.imageUrl ? (
+                                <img
+                                  src={service.imageUrl}
+                                  alt={service.title}
+                                  className="w-full h-full object-cover"
+                                  onError={(e) => {
+                                    (e.target as HTMLImageElement).src = 'https://via.placeholder.com/100x100?text=No+Image';
+                                  }}
+                                />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center bg-slate-100 text-slate-400">
+                                  <Sparkles size={16} />
                                 </div>
+                              )}
+                            </div>
+
+                            <div className="flex-1 min-w-0">
+                              <h3 className="text-sm sm:text-base font-black text-slate-900 mb-1 line-clamp-1">
+                                {service.title}
+                              </h3>
+                              <div className="flex items-center flex-wrap gap-2 text-xs text-slate-500">
+                                <span className="flex items-center gap-1">
+                                  <Sparkles size={12} className="text-indigo-500" />
+                                  {service.subServices?.length || 0} Sub-services
+                                </span>
                               </div>
-                            ))}
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-2 flex-shrink-0">
+                            <div
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleEdit(service);
+                              }}
+                              className="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all cursor-pointer"
+                              title="Edit Service"
+                            >
+                              <Edit size={18} />
+                            </div>
+                            <div
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteClick(service);
+                              }}
+                              className="p-2 text-rose-600 hover:bg-rose-50 rounded-lg transition-all cursor-pointer"
+                              title="Delete Service"
+                            >
+                              <Trash2 size={18} />
+                            </div>
+                            <div className="p-2 text-slate-400">
+                              {expandedServices.has(service._id) ? (
+                                <ChevronUp size={20} />
+                              ) : (
+                                <ChevronDown size={20} />
+                              )}
+                            </div>
+                          </div>
+                        </button>
+
+                        {/* Accordion Content */}
+                        <div
+                          className={`overflow-hidden transition-all duration-300 ease-in-out ${expandedServices.has(service._id) ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
+                            }`}
+                        >
+                          <div className="p-3 sm:p-4 pt-0 border-t border-slate-100 bg-slate-50/50">
+                            <div className="mt-3 space-y-2">
+                              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Sub-Services</h4>
+                              {service.subServices && service.subServices.length > 0 ? (
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                                  {service.subServices.map((sub: any, idx: number) => (
+                                    <div key={idx} className="bg-white p-2 rounded-lg border border-slate-100 flex gap-3">
+                                      {sub.imageUrl && (
+                                        <div className="w-10 h-10 rounded-md bg-slate-100 overflow-hidden flex-shrink-0">
+                                          <img src={sub.imageUrl} alt={sub.name} className="w-full h-full object-cover" />
+                                        </div>
+                                      )}
+                                      <div className="min-w-0">
+                                        <p className="text-xs font-bold text-slate-900 truncate">{sub.name}</p>
+                                        <p className="text-[10px] text-indigo-600 font-bold">₹{sub.price}</p>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              ) : (
+                                <p className="text-sm text-slate-400 italic">No sub-services defined.</p>
+                              )}
+                            </div>
+
+                            <div className="mt-4 pt-3 border-t border-slate-200">
+                              <p className="text-sm text-slate-600 leading-relaxed">
+                                <span className="font-bold text-slate-900">Description: </span>
+                                {service.description}
+                              </p>
+                            </div>
                           </div>
                         </div>
-                      ) : (
-                        <div className="text-center py-4">
-                          <p className="text-xs text-slate-400 italic">No sub-services added yet</p>
-                        </div>
-                      )}
+                      </div>
+                    ))
+                  ) : (
+                    <div className="p-8 text-center bg-slate-50 rounded-xl border border-dashed border-slate-200">
+                      <p className="text-slate-400 font-medium text-sm">No services in this category yet.</p>
+                      <button
+                        onClick={() => {
+                          setEditingService(null);
+                          resetForm();
+                          setFormData(prev => ({ ...prev, category: category.name }));
+                          setShowForm(true);
+                        }}
+                        className="mt-2 text-indigo-600 text-xs font-bold hover:underline"
+                      >
+                        + Add Service
+                      </button>
                     </div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+
+          {/* Handle uncategorized services if any */}
+          {(() => {
+            const categorizedTitles = new Set(categories.map(c => c.name));
+            const uncategorizedServices = services.filter(s => !categorizedTitles.has(s.category) && (searchTerm === '' || s.title.toLowerCase().includes(searchTerm.toLowerCase())));
+
+            if (uncategorizedServices.length > 0) {
+              return (
+                <div className="space-y-4 pt-8 border-t-2 border-dashed border-slate-200">
+                  <div className="flex items-center gap-3 pb-2">
+                    <h2 className="text-xl sm:text-2xl font-black text-rose-600 tracking-tight">
+                      Other / Uncategorized
+                    </h2>
+                    <span className="px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-600 text-xs font-bold">
+                      {uncategorizedServices.length}
+                    </span>
+                  </div>
+                  <div className="space-y-2 sm:space-y-3">
+                    <p className="text-slate-500 text-sm">These services have categories that no longer exist. Please edit them.</p>
+                    {uncategorizedServices.map((service) => (
+                      <div key={service._id} className="p-4 bg-rose-50 border border-rose-100 rounded-xl flex justify-between items-center">
+                        <span className="font-bold text-slate-900">{service.title} <span className="text-rose-500 text-xs">({service.category})</span></span>
+                        <div className="flex gap-2">
+                          <button onClick={() => handleEdit(service)} className="text-indigo-600 font-bold text-xs hover:underline">Fix Category</button>
+                          <button onClick={() => handleDeleteClick(service)} className="text-rose-600 font-bold text-xs hover:underline">Delete</button>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
-              );
-            })
-          ) : (
-            <div className="text-center py-16 bg-white border border-slate-100 rounded-xl">
-              <Sparkles size={48} className="mx-auto text-slate-300 mb-4" />
-              <p className="text-slate-500 font-medium text-lg mb-2">No services found</p>
-              <p className="text-slate-400 text-sm">Create your first service to get started</p>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Pagination */}
-      {filteredServices.length > 0 && (
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={setCurrentPage}
-          itemsPerPage={itemsPerPage}
-          totalItems={filteredServices.length}
-        />
-      )}
-
-      {filteredServices.length === 0 && (
-        <div className="text-center py-12 bg-white border border-slate-100 rounded-xl">
-          <p className="text-slate-500 font-medium">No services found</p>
+              )
+            }
+            return null;
+          })()}
         </div>
       )}
     </div>
   );
 };
-
 export default ServicesPage;

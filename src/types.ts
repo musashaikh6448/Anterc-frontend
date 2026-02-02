@@ -38,6 +38,7 @@ export interface EnquiryFormData {
   email?: string;
   subject?: string;
   message?: string;
+  bookedFor?: 'myself' | 'others';
 
 }
 
@@ -51,6 +52,7 @@ export interface BookingFormData {
   issue: string;
   preferredDate: string;
   preferredTime: string;
+  bookedFor?: 'myself' | 'others';
 }
 
 export interface StatItem {

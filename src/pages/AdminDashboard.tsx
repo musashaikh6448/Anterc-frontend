@@ -11,6 +11,7 @@ import ThemePage from './admin/ThemePage';
 import TechniciansPage from './admin/TechniciansPage';
 
 import ContactEnquiriesPage from './admin/ContactEnquiriesPage';
+import CategoriesPage from './admin/CategoriesPage';
 
 const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -40,6 +41,7 @@ const AdminDashboard: React.FC = () => {
     if (path.includes('/enquiries')) return <EnquiriesPage />;
     if (path.includes('/customers')) return <CustomersPage />;
     if (path.includes('/admins')) return <AdminsPage />;
+    if (path.includes('/categories')) return <CategoriesPage />;
     if (path.includes('/services')) return <ServicesPage />;
     if (path.includes('/theme')) return <ThemePage />;
     if (path.includes('/technicians')) return <TechniciansPage />;

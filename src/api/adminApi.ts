@@ -24,6 +24,13 @@ export const createAdmin = (adminData: any) => api.post('/admin/admins', adminDa
 export const updateAdmin = (id: string, adminData: any) => api.put(`/admin/admins/${id}`, adminData);
 export const deleteAdmin = (id: string) => api.delete(`/admin/admins/${id}`);
 
+// Category Management APIs
+export const getAllCategoriesAdmin = () => api.get('/categories/admin');
+export const createCategory = (data: any) => api.post('/categories', data);
+export const updateCategory = (id: string, data: any) => api.put(`/categories/${id}`, data);
+export const deleteCategory = (id: string) => api.delete(`/categories/${id}`);
+export const reorderCategories = (orderedIds: string[]) => api.put('/categories/reorder', { orderedIds });
+
 // Service Management APIs
 export const getAllServicesAdmin = () => api.get('/admin/services');
 export const createService = (serviceData: any) => api.post('/admin/services', serviceData);
