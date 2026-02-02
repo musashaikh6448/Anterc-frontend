@@ -144,9 +144,12 @@ const EnquiryPage: React.FC = () => {
           const subService = mainService.subServices[parseInt(subIndex)];
           setService({
             id: serviceId,
+            mainId: mainServiceId, // Store main Service ID
+            subId: subService._id, // Store specific sub-service ID
             name: subService.name,
             description: subService.description,
             price: subService.price,
+            actualPrice: subService.actualPrice, // Capture actual Price
             imageUrl: subService.imageUrl,
             issuesResolved: subService.issuesResolved || [],
           });
@@ -157,9 +160,12 @@ const EnquiryPage: React.FC = () => {
             const subService = foundService.subServices[0];
             setService({
               id: serviceId,
+              mainId: foundService._id,
+              subId: subService._id,
               name: subService.name,
               description: subService.description,
               price: subService.price,
+              actualPrice: subService.actualPrice,
               imageUrl: subService.imageUrl,
               issuesResolved: subService.issuesResolved || [],
             });
@@ -253,7 +259,17 @@ const EnquiryPage: React.FC = () => {
         state: formData.state,
         pincode: formData.pincode,
         brand: formData.brand,
-        bookedFor: formData.bookedFor
+        bookedFor: formData.bookedFor,
+        items: [{
+          serviceId: service.mainId,
+          subServiceId: service.subId,
+          name: service.name,
+          category: category?.title,
+          price: service.price,
+          actualPrice: service.actualPrice,
+          imageUrl: service.imageUrl,
+          quantity: 1
+        }]
       });
       toast.success('Enquiry sent successfully!');
       navigate('/success');

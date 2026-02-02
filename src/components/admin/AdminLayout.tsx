@@ -11,7 +11,8 @@ import {
   X,
   Sparkles,
   Mail,
-  Grid
+  Grid,
+  Star
 } from 'lucide-react';
 import { useAuth } from '../../AuthContext';
 import { toast } from 'sonner';
@@ -35,6 +36,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   const menuItems = [
     { icon: LayoutDashboard, label: 'Dashboard', path: '/admin/dashboard' },
     { icon: MessageSquare, label: 'Service Enquiries', path: '/admin/enquiries' },
+    { icon: Star, label: 'Reviews', path: '/admin/reviews' },
     { icon: Mail, label: 'Contact Messages', path: '/admin/contact-enquiries' },
     { icon: UserCog, label: 'Technicians', path: '/admin/technicians' },
     { icon: Users, label: 'Customers', path: '/admin/customers' },

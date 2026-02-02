@@ -12,6 +12,7 @@ import TechniciansPage from './admin/TechniciansPage';
 
 import ContactEnquiriesPage from './admin/ContactEnquiriesPage';
 import CategoriesPage from './admin/CategoriesPage';
+import ReviewsPage from './admin/ReviewsPage';
 
 const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -39,6 +40,7 @@ const AdminDashboard: React.FC = () => {
     const path = location.pathname;
     if (path.includes('/contact-enquiries')) return <ContactEnquiriesPage />;
     if (path.includes('/enquiries')) return <EnquiriesPage />;
+    if (path.includes('/reviews')) return <ReviewsPage />;
     if (path.includes('/customers')) return <CustomersPage />;
     if (path.includes('/admins')) return <AdminsPage />;
     if (path.includes('/categories')) return <CategoriesPage />;

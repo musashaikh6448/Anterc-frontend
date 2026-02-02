@@ -12,7 +12,6 @@ const TechnicianModal: React.FC<TechnicianModalProps> = ({ isOpen, onClose, onSu
     const [formData, setFormData] = useState({
         name: '',
         phone: '',
-        password: '',
         specialization: '',
         availabilityStatus: 'available'
     });
@@ -23,7 +22,6 @@ const TechnicianModal: React.FC<TechnicianModalProps> = ({ isOpen, onClose, onSu
             setFormData({
                 name: technician.name || '',
                 phone: technician.phone || '',
-                password: '', // Don't fill password on edit
                 specialization: technician.specialization || '',
                 availabilityStatus: technician.availabilityStatus || 'available'
             });
@@ -31,7 +29,6 @@ const TechnicianModal: React.FC<TechnicianModalProps> = ({ isOpen, onClose, onSu
             setFormData({
                 name: '',
                 phone: '',
-                password: '',
                 specialization: '',
                 availabilityStatus: 'available'
             });
@@ -97,35 +94,6 @@ const TechnicianModal: React.FC<TechnicianModalProps> = ({ isOpen, onClose, onSu
                             placeholder="10-digit mobile number"
                         />
                     </div>
-
-                    {!technician && (
-                        <div>
-                            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Password</label>
-                            <input
-                                type="password"
-                                name="password"
-                                required={!technician}
-                                value={formData.password}
-                                onChange={handleChange}
-                                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 font-medium text-slate-700"
-                                placeholder="Set login password"
-                            />
-                        </div>
-                    )}
-
-                    {technician && (
-                        <div>
-                            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">New Password (Optional)</label>
-                            <input
-                                type="password"
-                                name="password"
-                                value={formData.password}
-                                onChange={handleChange}
-                                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 font-medium text-slate-700"
-                                placeholder="Leave blank to keep current"
-                            />
-                        </div>
-                    )}
 
                     <div>
                         <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Specialization</label>

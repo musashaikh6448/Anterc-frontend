@@ -1,9 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
-import { Search, Menu, X, User, LogOut, ClipboardList, ChevronDown } from 'lucide-react';
+import { Search, Menu, X, User, LogOut, ClipboardList, ChevronDown, ShoppingCart } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import SearchOverlay from './SearchOverlay';
 import { useAuth } from '../AuthContext';
+import { useCart } from '../context/CartContext';
 import { useTheme } from '../contexts/ThemeContext';
 
 const Header: React.FC = () => {
@@ -11,6 +12,7 @@ const Header: React.FC = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const { user, logout } = useAuth();
+  const { cartItems } = useCart();
   const { theme } = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
@@ -133,8 +135,29 @@ const Header: React.FC = () => {
                 <Search size={20} className="sm:w-[22px] sm:h-[22px]" strokeWidth={2.5} />
               </button>
 
+              <Link
+                to="/cart"
+                className="relative p-2.5 sm:p-3.5 text-slate-500 rounded-xl transition-all active:scale-90 group"
+                onMouseEnter={(e) => {
+                  const primary = theme?.colors?.primary || '#4f46e5';
+                  e.currentTarget.style.backgroundColor = `${primary}10`;
+                  e.currentTarget.style.color = primary;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = '';
+                  e.currentTarget.style.color = '';
+                }}
+              >
+                <ShoppingCart size={20} className="sm:w-[22px] sm:h-[22px]" strokeWidth={2.5} />
+                {cartItems.length > 0 && (
+                  <span className="absolute -top-1 -right-1 sm:-top-1 sm:-right-1 min-w-[18px] h-[18px] sm:min-w-[20px] sm:h-[20px] bg-rose-500 rounded-full text-white text-[10px] font-bold flex items-center justify-center border-2 border-white shadow-sm">
+                    {cartItems.length}
+                  </span>
+                )}
+              </Link>
+
               {user ? (
-                <div className="relative">
+                <div className="relative hidden lg:block">
                   <button
                     onClick={() => setIsProfileOpen(!isProfileOpen)}
                     className="flex items-center gap-2 px-3 py-2 bg-slate-50 rounded-xl border border-slate-100 transition-all"
@@ -260,9 +283,17 @@ const Header: React.FC = () => {
                   </div>
                   <div>
                     <p className="font-black text-slate-900 leading-none">{user.name}</p>
-                    <p className="text-xs text-slate-400 font-bold mt-1"> {user.mobile}</p>
+                    <p className="text-xs text-slate-400 font-bold mt-1"> {user.phone}</p>
                   </div>
                 </div>
+                <Link
+                  to="/cart"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="flex items-center gap-3 py-3 font-black text-sm uppercase tracking-widest text-slate-900 hover:text-indigo-600 mb-1"
+                >
+                  <ShoppingCart size={18} />
+                  My Cart ({cartItems.length})
+                </Link>
                 <Link
                   to="/my-enquiries"
                   onClick={() => setIsMenuOpen(false)}

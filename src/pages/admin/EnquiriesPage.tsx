@@ -287,7 +287,18 @@ const EnquiriesPage: React.FC = () => {
                       <div className="text-xs text-slate-500">{enquiry.user?.phone || 'N/A'}</div>
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-sm font-bold text-slate-900">{enquiry.serviceType}</td>
+                  <td className="px-4 py-3 text-sm font-bold text-slate-900">
+                    {enquiry.items && enquiry.items.length > 0 ? (
+                      <div className="flex items-center gap-2">
+                        <span>Multi-Service</span>
+                        <span className="bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full text-[10px] font-black">
+                          {enquiry.items.length}
+                        </span>
+                      </div>
+                    ) : (
+                      enquiry.serviceType
+                    )}
+                  </td>
                   <td className="px-4 py-3 text-sm text-slate-600">{enquiry.applianceType}</td>
                   <td className="px-4 py-3 text-sm text-slate-600">{enquiry.brand || '-'}</td>
                   <td className="px-4 py-3">
@@ -417,6 +428,57 @@ const EnquiriesPage: React.FC = () => {
               <div>
                 <div className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Appliance</div>
                 <div className="text-sm text-slate-600">{enquiry.applianceType} {enquiry.brand && <span className="text-slate-400">({enquiry.brand})</span>}</div>
+                {/* Service Details */}
+                <div>
+                  <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3">Service Details</h3>
+                  <div className="bg-slate-50 p-4 rounded-xl space-y-3">
+                    {enquiry.items && enquiry.items.length > 0 ? (
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center pb-2 border-b border-slate-200">
+                          <span className="text-xs font-black text-slate-500 uppercase">Service</span>
+                          <span className="text-xs font-black text-slate-500 uppercase">Price</span>
+                        </div>
+                        {enquiry.items.map((item: any, idx: number) => (
+                          <div key={idx} className="flex justify-between items-start text-sm">
+                            <div>
+                              <p className="font-bold text-slate-800">{item.name}</p>
+                              <p className="text-xs text-slate-500">{item.category}</p>
+                            </div>
+                            <div className="text-right">
+                              <p className="font-bold text-slate-900">₹{item.price}</p>
+                              {item.actualPrice && (
+                                <p className="text-xs text-slate-400 line-through">₹{item.actualPrice}</p>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                        <div className="pt-3 border-t border-slate-200 flex justify-between items-center mt-2">
+                          <span className="font-black text-slate-900">Total</span>
+                          <span className="font-black text-indigo-600 text-lg">
+                            ₹{enquiry.items.reduce((acc: number, item: any) => acc + (item.price * (item.quantity || 1)), 0)}
+                          </span>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="flex justify-between">
+                          <span className="text-slate-500 text-sm">Service Type</span>
+                          <span className="font-bold text-slate-900">{enquiry.serviceType}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-slate-500 text-sm">Appliance</span>
+                          <span className="font-bold text-slate-900">{enquiry.applianceType}</span>
+                        </div>
+                        {enquiry.brand && (
+                          <div className="flex justify-between">
+                            <span className="text-slate-500 text-sm">Brand</span>
+                            <span className="font-bold text-slate-900">{enquiry.brand}</span>
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </div>
+                </div>
               </div>
               <div>
                 <div className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Location</div>

@@ -53,3 +53,6 @@ export const getTechnicians = () => api.get('/technicians');
 export const createTechnician = (data: any) => api.post('/technicians', data);
 export const updateTechnician = (id: string, data: any) => api.put(`/technicians/${id}`, data);
 export const deleteTechnician = (id: string) => api.delete(`/technicians/${id}`);
+
+// Review Management APIs
+export const getAllReviews = () => api.get('/reviews');

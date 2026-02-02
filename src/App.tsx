@@ -1,11 +1,20 @@
-
 import React from 'react';
 import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { Toaster } from 'sonner';
 import { AuthProvider } from './AuthContext';
+import { CartProvider } from './context/CartContext';
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
+
+// Components
 import Header from './components/Header';
 import Footer from './components/Footer';
+import NavigationLoader from './components/NavigationLoader';
+import ScrollToTop from './components/ScrollToTop';
+
+// Pages
 import HomePage from './pages/HomePage';
+import CartPage from './pages/CartPage';
+import CheckoutPage from './pages/CheckoutPage';
 import CategoryDetailsPage from './pages/CategoryDetailsPage';
 import EnquiryPage from './pages/EnquiryPage';
 import SuccessPage from './pages/SuccessPage';
@@ -17,8 +26,7 @@ import AuthPage from './pages/AuthPage';
 import MyEnquiriesPage from './pages/MyEnquiriesPage';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminLoginPage from './pages/AdminLoginPage';
-
-import NavigationLoader from './components/NavigationLoader';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -33,8 +41,11 @@ const AnimatedRoutes = () => {
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/terms" element={<TermsPage />} />
         <Route path="/auth" element={<AuthPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/my-enquiries" element={<MyEnquiriesPage />} />
         <Route path="/enquiry/:categoryId/:serviceId" element={<EnquiryPage />} />
+        <Route path="/cart" element={<CartPage />} />
+        <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/success" element={<SuccessPage />} />
         <Route path="/admin/login" element={<AdminLoginPage />} />
         <Route path="/admin/*" element={<AdminDashboard />} />
@@ -42,8 +53,6 @@ const AnimatedRoutes = () => {
     </div>
   );
 };
-
-import ScrollToTop from './components/ScrollToTop';
 
 const AppLayoutContent = () => {
   const location = useLocation();
@@ -94,17 +103,17 @@ const AppLayout = () => {
   return <AppLayoutContent />;
 };
 
-import { Toaster } from 'sonner';
-
 const App: React.FC = () => {
   return (
     <AuthProvider>
       <ThemeProvider>
-        <Router>
-          <ScrollToTop />
-          <Toaster position="top-center" richColors />
-          <AppLayout />
-        </Router>
+        <CartProvider>
+          <Router>
+            <ScrollToTop />
+            <Toaster position="top-center" richColors />
+            <AppLayout />
+          </Router>
+        </CartProvider>
       </ThemeProvider>
     </AuthProvider>
   );

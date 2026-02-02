@@ -77,13 +77,24 @@ const EnquiryDetailsModal: React.FC<EnquiryDetailsModalProps> = ({
     };
 
     const constructShareText = () => {
+        let serviceDetails = '';
+        if (enquiry.items && enquiry.items.length > 0) {
+            serviceDetails = `*Services Requested:*\n`;
+            enquiry.items.forEach((item: any) => {
+                serviceDetails += `- ${item.name} (${item.category}): ₹${item.price}\n`;
+            });
+            const total = enquiry.items.reduce((acc: number, item: any) => acc + (item.price * (item.quantity || 1)), 0);
+            serviceDetails += `\n*Total Estimated:* ₹${total}`;
+        } else {
+            serviceDetails = `*Service:* ${enquiry.serviceType}\n*Appliance:* ${enquiry.applianceType} ${enquiry.brand ? `(${enquiry.brand})` : ''}`;
+        }
+
         return `*Service Enquiry Details*
 -------------------------
 *Customer:* ${enquiry.user?.name || 'N/A'}
 *Mobile:* ${enquiry.user?.phone || 'N/A'}
 
-*Service:* ${enquiry.serviceType}
-*Appliance:* ${enquiry.applianceType} ${enquiry.brand ? `(${enquiry.brand})` : ''}
+${serviceDetails}
 
 *Address:*
 ${enquiry.address}
@@ -158,15 +169,7 @@ ${enquiry.message || 'No message provided'}
                                     <p className="text-sm font-bold text-slate-900">{enquiry.user?.phone || 'N/A'}</p>
                                 </div>
                             </div>
-                            <div className="flex items-start gap-3 sm:col-span-2">
-                                <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 flex-shrink-0">
-                                    <Mail size={20} strokeWidth={2.5} />
-                                </div>
-                                <div>
-                                    <p className="text-xs font-bold text-slate-400 mb-0.5">Email</p>
-                                    <p className="text-sm font-bold text-slate-900">{enquiry.email || enquiry.user?.email || 'N/A'}</p>
-                                </div>
-                            </div>
+                            
                         </div>
                     </div>
 
@@ -176,16 +179,45 @@ ${enquiry.message || 'No message provided'}
                             Service Request
                         </h3>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                            <div className="flex items-start gap-3">
-                                <div className="w-10 h-10 rounded-xl bg-violet-50 flex items-center justify-center text-violet-600 flex-shrink-0">
-                                    <Wrench size={20} strokeWidth={2.5} />
+                            {enquiry.items && enquiry.items.length > 0 ? (
+                                <div className="sm:col-span-2 space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                    <div className="flex justify-between items-center pb-2 border-b border-slate-200">
+                                        <span className="text-xs font-black text-slate-500 uppercase">Service</span>
+                                        <span className="text-xs font-black text-slate-500 uppercase">Price</span>
+                                    </div>
+                                    {enquiry.items.map((item: any, idx: number) => (
+                                        <div key={idx} className="flex justify-between items-start text-sm">
+                                            <div>
+                                                <p className="font-bold text-slate-800">{item.name}</p>
+                                                <p className="text-xs text-slate-500">{item.category}</p>
+                                            </div>
+                                            <div className="text-right">
+                                                <p className="font-bold text-slate-900">₹{item.price}</p>
+                                                {item.actualPrice && (
+                                                    <p className="text-xs text-slate-400 line-through">₹{item.actualPrice}</p>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))}
+                                    <div className="pt-3 border-t border-slate-200 flex justify-between items-center mt-2">
+                                        <span className="font-black text-slate-900">Total</span>
+                                        <span className="font-black text-indigo-600 text-lg">
+                                            ₹{enquiry.items.reduce((acc: number, item: any) => acc + (item.price * (item.quantity || 1)), 0)}
+                                        </span>
+                                    </div>
                                 </div>
-                                <div>
-                                    <p className="text-xs font-bold text-slate-400 mb-0.5">Service Type</p>
-                                    <p className="text-sm font-bold text-slate-900">{enquiry.serviceType}</p>
-                                    <p className="text-xs text-slate-500 mt-1">{enquiry.applianceType} {enquiry.brand && `(${enquiry.brand})`}</p>
+                            ) : (
+                                <div className="flex items-start gap-3">
+                                    <div className="w-10 h-10 rounded-xl bg-violet-50 flex items-center justify-center text-violet-600 flex-shrink-0">
+                                        <Wrench size={20} strokeWidth={2.5} />
+                                    </div>
+                                    <div>
+                                        <p className="text-xs font-bold text-slate-400 mb-0.5">Service Type</p>
+                                        <p className="text-sm font-bold text-slate-900">{enquiry.serviceType}</p>
+                                        <p className="text-xs text-slate-500 mt-1">{enquiry.applianceType} {enquiry.brand && `(${enquiry.brand})`}</p>
+                                    </div>
                                 </div>
-                            </div>
+                            )}
                             <div className="flex items-start gap-3">
                                 <div className="w-10 h-10 rounded-xl bg-violet-50 flex items-center justify-center text-violet-600 flex-shrink-0">
                                     <Calendar size={20} strokeWidth={2.5} />

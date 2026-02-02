@@ -1,7 +1,8 @@
 
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ChevronLeft, ArrowRight, Star, HelpCircle, BadgeCheck, ChevronDown, CheckCircle2 } from 'lucide-react';
+import { ChevronLeft, ArrowRight, Star, HelpCircle, BadgeCheck, ChevronDown, CheckCircle2, ShoppingCart } from 'lucide-react';
+import { useCart } from '../context/CartContext';
 import ImageWithSkeleton from '../components/ImageWithSkeleton';
 import { getServicesByCategory, getAllCategories } from '@/api/serviceApi';
 
@@ -32,6 +33,9 @@ const generateSlug = (name: string): string => {
 
 const CategoryDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const { addToCart, cartItems } = useCart();
+
   const [category, setCategory] = useState<any>(null);
   const [services, setServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -120,6 +124,8 @@ const CategoryDetailsPage: React.FC = () => {
               estimatedTime: '',
               imageUrl: subService.imageUrl,
               issuesResolved: subService.issuesResolved || [],
+              rating: subService.rating || 0,
+              numReviews: subService.numReviews || 0,
               mainServiceId: service._id, // Keep reference to main service
             });
           });
@@ -232,27 +238,54 @@ const CategoryDetailsPage: React.FC = () => {
                         <p className={`text-slate-500 text-xs sm:text-sm font-medium leading-relaxed transition-all duration-300 ${isExpanded ? 'line-clamp-none' : 'line-clamp-2 sm:line-clamp-none'}`}>
                           {service.description}
                         </p>
+
+                        {/* Rating Display */}
+                        <div className="flex items-center gap-2 pt-1">
+                          <div className="flex items-center text-yellow-500">
+                            <Star size={14} className="fill-current" />
+                            <span className="text-sm font-bold ml-1 text-slate-900">{service.rating > 0 ? service.rating.toFixed(1) : 'New'}</span>
+                          </div>
+                          {service.numReviews > 0 && (
+                            <span className="text-[10px] text-slate-400 font-medium">({service.numReviews} reviews)</span>
+                          )}
+                        </div>
                       </div>
 
                       <div className="mt-4 sm:mt-8 flex items-center justify-between border-t border-slate-50 pt-4 sm:pt-6">
                         <div className="flex flex-col">
                           {service.actualPrice && (
-                            <span className="text-xs text-slate-400 line-through decoration-rose-500/50 decoration-2 font-medium">₹{service.actualPrice}</span>
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="text-xs text-slate-400 line-through decoration-rose-500/50 decoration-2 font-medium">₹{service.actualPrice}</span>
+                              {service.actualPrice > service.price && (
+                                <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">
+                                  {Math.round(((service.actualPrice - service.price) / service.actualPrice) * 100)}% OFF
+                                </span>
+                              )}
+                            </div>
                           )}
                           {service.price && (
                             <span className="text-xl sm:text-2xl font-black text-slate-900">₹{service.price}</span>
                           )}
                         </div>
 
-                        <Link
-                          to={`/enquiry/${category.id}/${service.id}`}
+                        <button
                           onClick={(e) => {
                             e.stopPropagation();
+                            addToCart({
+                              serviceId: service.mainServiceId,
+                              subServiceId: service.id, // already formatted as serviceId-subIndex
+                              name: service.name,
+                              category: category.title || 'Service',
+                              price: service.price,
+                              actualPrice: service.actualPrice,
+                              imageUrl: service.imageUrl,
+                              quantity: 1
+                            });
                           }}
-                          className="px-6 py-3 sm:px-8 sm:py-4 bg-slate-900 text-white font-black text-[10px] sm:text-xs rounded-2xl hover:bg-indigo-600 transition-all shadow-xl"
+                          className="px-6 py-3 sm:px-8 sm:py-4 bg-slate-900 text-white font-black text-[10px] sm:text-xs rounded-2xl hover:bg-indigo-600 transition-all shadow-xl active:scale-95"
                         >
-                          Request Service
-                        </Link>
+                          Add to Cart
+                        </button>
                       </div>
                     </div>
                   </div>
