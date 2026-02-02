@@ -69,69 +69,71 @@ const CartPage: React.FC = () => {
                             const savingsPercent = item.actualPrice ? Math.round((savings / item.actualPrice) * 100) : 0;
 
                             return (
-                                <div key={item.subServiceId} className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex gap-6 transition-all hover:shadow-md">
-                                    <div className="w-24 h-24 sm:w-32 sm:h-32 bg-slate-100 rounded-xl overflow-hidden shrink-0 relative group">
-                                        {item.imageUrl ? (
-                                            <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                                        ) : (
-                                            <div className="w-full h-full flex items-center justify-center text-slate-300">
-                                                <ShoppingCart size={32} />
-                                            </div>
-                                        )}
-                                    </div>
-                                    <div className="flex-1 flex flex-col justify-between py-1">
-                                        <div>
-                                            <div className="flex justify-between items-start mb-2">
-                                                <div>
-                                                    <p className="text-xs font-black text-indigo-600 uppercase tracking-widest mb-1">{item.category}</p>
-                                                    <h3 className="text-lg font-bold text-slate-900 leading-tight">{item.name}</h3>
+                                <div key={item.subServiceId} className="bg-white p-3 sm:p-5 rounded-2xl shadow-sm border border-slate-100 transition-all hover:shadow-md">
+                                    <div className="flex gap-3 sm:gap-6">
+                                        <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 bg-slate-100 rounded-xl overflow-hidden shrink-0 relative group">
+                                            {item.imageUrl ? (
+                                                <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center text-slate-300">
+                                                    <ShoppingCart size={24} className="sm:w-8 sm:h-8" />
                                                 </div>
-                                                <button
-                                                    onClick={() => removeFromCart(item.subServiceId)}
-                                                    className="text-slate-400 hover:text-rose-500 hover:bg-rose-50 p-2 rounded-xl transition-all"
-                                                    title="Remove Item"
-                                                >
-                                                    <Trash2 size={20} />
-                                                </button>
-                                            </div>
+                                            )}
                                         </div>
-
-                                        <div className="flex items-end justify-between mt-4">
-                                            <div className="flex items-baseline gap-3">
-                                                <span className="text-2xl font-black text-slate-900">₹{(item.price * item.quantity).toLocaleString('en-IN')}</span>
-                                                {item.actualPrice && item.actualPrice > item.price && (
-                                                    <>
-                                                        <span className="text-sm text-slate-400 line-through font-medium">₹{(item.actualPrice * item.quantity).toLocaleString('en-IN')}</span>
-                                                        <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg">
-                                                            {savingsPercent}% OFF
-                                                        </span>
-                                                    </>
-                                                )}
+                                        <div className="flex-1 flex flex-col justify-between py-1 min-w-0">
+                                            <div>
+                                                <div className="flex justify-between items-start mb-2 gap-2">
+                                                    <div className="flex-1 min-w-0">
+                                                        <p className="text-[10px] sm:text-xs font-black text-indigo-600 uppercase tracking-widest mb-1">{item.category}</p>
+                                                        <h3 className="text-sm sm:text-lg font-bold text-slate-900 leading-tight line-clamp-2">{item.name}</h3>
+                                                    </div>
+                                                    <button
+                                                        onClick={() => removeFromCart(item.subServiceId)}
+                                                        className="text-slate-400 hover:text-rose-500 hover:bg-rose-50 p-1.5 sm:p-2 rounded-xl transition-all shrink-0"
+                                                        title="Remove Item"
+                                                    >
+                                                        <Trash2 size={18} className="sm:w-5 sm:h-5" />
+                                                    </button>
+                                                </div>
                                             </div>
 
-                                            {/* Quantity Controls */}
-                                            <div className="flex items-center gap-3 bg-slate-50 rounded-xl px-3 py-2 border border-slate-200">
-                                                <button
-                                                    onClick={() => {
-                                                        const newQty = item.quantity - 1;
-                                                        if (newQty >= 1) {
-                                                            updateQuantity(item.subServiceId, newQty);
-                                                        }
-                                                    }}
-                                                    disabled={item.quantity <= 1}
-                                                    className="w-7 h-7 flex items-center justify-center bg-white rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-900 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-slate-700 transition-all font-bold"
-                                                    title="Decrease quantity"
-                                                >
-                                                    -
-                                                </button>
-                                                <span className="text-sm font-black text-slate-900 min-w-[2rem] text-center">{item.quantity}</span>
-                                                <button
-                                                    onClick={() => updateQuantity(item.subServiceId, item.quantity + 1)}
-                                                    className="w-7 h-7 flex items-center justify-center bg-white rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-900 hover:text-white transition-all font-bold"
-                                                    title="Increase quantity"
-                                                >
-                                                    +
-                                                </button>
+                                            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mt-3 sm:mt-4">
+                                                <div className="flex flex-wrap items-baseline gap-2">
+                                                    <span className="text-lg sm:text-2xl font-black text-slate-900">₹{(item.price * item.quantity).toLocaleString('en-IN')}</span>
+                                                    {item.actualPrice && item.actualPrice > item.price && (
+                                                        <>
+                                                            <span className="text-xs sm:text-sm text-slate-400 line-through font-medium">₹{(item.actualPrice * item.quantity).toLocaleString('en-IN')}</span>
+                                                            <span className="text-[10px] sm:text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg">
+                                                                {savingsPercent}% OFF
+                                                            </span>
+                                                        </>
+                                                    )}
+                                                </div>
+
+                                                {/* Quantity Controls */}
+                                                <div className="flex items-center gap-2 sm:gap-3 bg-slate-50 rounded-xl px-2 sm:px-3 py-1.5 sm:py-2 border border-slate-200 self-start sm:self-auto">
+                                                    <button
+                                                        onClick={() => {
+                                                            const newQty = item.quantity - 1;
+                                                            if (newQty >= 1) {
+                                                                updateQuantity(item.subServiceId, newQty);
+                                                            }
+                                                        }}
+                                                        disabled={item.quantity <= 1}
+                                                        className="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center bg-white rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-900 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-slate-700 transition-all font-bold text-sm"
+                                                        title="Decrease quantity"
+                                                    >
+                                                        -
+                                                    </button>
+                                                    <span className="text-sm font-black text-slate-900 min-w-[1.5rem] sm:min-w-[2rem] text-center">{item.quantity}</span>
+                                                    <button
+                                                        onClick={() => updateQuantity(item.subServiceId, item.quantity + 1)}
+                                                        className="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center bg-white rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-900 hover:text-white transition-all font-bold text-sm"
+                                                        title="Increase quantity"
+                                                    >
+                                                        +
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

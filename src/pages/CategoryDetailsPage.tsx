@@ -233,85 +233,87 @@ const CategoryDetailsPage: React.FC = () => {
                   key={service.id}
                   className={`group relative bg-white rounded-[2rem] sm:rounded-[2.5rem] p-4 sm:p-6 border transition-all duration-700 ${isExpanded ? 'border-indigo-200 shadow-2xl' : 'border-slate-100 hover:border-indigo-100'}`}
                 >
-                  <div className="flex flex-row gap-4 sm:gap-6 cursor-pointer items-stretch" onClick={() => toggleExpand(service.id)}>
-                    <div className="w-28 sm:w-40 xl:w-48 rounded-[1.2rem] sm:rounded-[2rem] overflow-hidden shrink-0 shadow-lg self-stretch relative">
-                      <ImageWithSkeleton
-                        src={service.imageUrl}
-                        alt={service.name}
-                        className="w-full h-full object-cover absolute inset-0"
-                        containerClassName="h-full w-full"
-                      />
+                  <div className="flex flex-row gap-4 sm:gap-6 cursor-pointer items-start" onClick={() => toggleExpand(service.id)}>
+                    {/* Image and Rating Column */}
+                    <div className="flex flex-col gap-3 shrink-0">
+                      <div className="w-28 h-28 sm:w-36 sm:h-36 md:w-40 md:h-40 lg:w-44 lg:h-44 rounded-[1.2rem] sm:rounded-[2rem] overflow-hidden shadow-lg relative bg-slate-100">
+                        <ImageWithSkeleton
+                          src={service.imageUrl}
+                          alt={service.name}
+                          className="w-full h-full object-cover"
+                          containerClassName="h-full w-full"
+                        />
+                      </div>
+                      {/* Rating below image */}
+                      <div className="flex flex-col gap-1.5 w-28 sm:w-36 md:w-40 lg:w-44">
+                        <div className="flex items-center gap-1.5">
+                          <div className="flex items-center text-yellow-500">
+                            <Star size={14} className="fill-current" />
+                            <span className="text-xs font-bold ml-1 text-slate-900">{service.rating > 0 ? service.rating.toFixed(1) : 'New'}</span>
+                          </div>
+                          {service.numReviews > 0 && (
+                            <span className="text-[10px] text-slate-400 font-medium">({service.numReviews})</span>
+                          )}
+                        </div>
+                        {/* Price below rating */}
+                        {service.price && (
+                          <div className="flex flex-col">
+                            <span className="text-lg sm:text-xl font-black text-slate-900">₹{service.price}</span>
+                            {service.actualPrice && service.actualPrice > service.price && (
+                              <div className="flex items-center gap-1.5">
+                                <span className="text-[10px] text-slate-400 line-through font-medium">₹{service.actualPrice}</span>
+                                <span className="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">
+                                  {Math.round(((service.actualPrice - service.price) / service.actualPrice) * 100)}% OFF
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
                     </div>
-                    <div className="flex flex-col justify-between flex-1 py-1">
+
+                    {/* Content Column */}
+                    <div className="flex flex-col justify-between flex-1 min-w-0 py-1">
                       <div className="space-y-2">
                         <div className="flex items-start justify-between gap-2">
-                          <h3 className="text-lg sm:text-2xl font-black text-slate-900 group-hover:text-indigo-600 transition-colors tracking-tighter leading-tight">
+                          <h3 className="text-base sm:text-xl md:text-2xl font-black text-slate-900 group-hover:text-indigo-600 transition-colors tracking-tighter leading-tight">
                             {service.name}
                           </h3>
                           <ChevronDown size={18} className={`transition-transform duration-500 shrink-0 mt-1 ${isExpanded ? 'rotate-180' : ''}`} />
                         </div>
-                        <p className={`text-slate-500 text-xs sm:text-sm font-medium leading-relaxed transition-all duration-300 ${isExpanded ? 'line-clamp-none' : 'line-clamp-2 sm:line-clamp-none'}`}>
+                        <p className={`text-slate-500 text-xs sm:text-sm font-medium leading-relaxed transition-all duration-300 ${isExpanded ? 'line-clamp-none' : 'line-clamp-2 sm:line-clamp-3'}`}>
                           {service.description}
                         </p>
-
-                        {/* Rating Display */}
-                        <div className="flex items-center gap-2 pt-1">
-                          <div className="flex items-center text-yellow-500">
-                            <Star size={14} className="fill-current" />
-                            <span className="text-sm font-bold ml-1 text-slate-900">{service.rating > 0 ? service.rating.toFixed(1) : 'New'}</span>
-                          </div>
-                          {service.numReviews > 0 && (
-                            <span className="text-[10px] text-slate-400 font-medium">({service.numReviews} reviews)</span>
-                          )}
-                        </div>
                       </div>
 
-                      <div className="mt-4 sm:mt-8 border-t border-slate-50 pt-4 sm:pt-6">
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="flex flex-col">
-                            {service.actualPrice && (
-                              <div className="flex items-center gap-2 mb-1">
-                                <span className="text-xs text-slate-400 line-through decoration-rose-500/50 decoration-2 font-medium">₹{service.actualPrice}</span>
-                                {service.actualPrice > service.price && (
-                                  <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">
-                                    {Math.round(((service.actualPrice - service.price) / service.actualPrice) * 100)}% OFF
-                                  </span>
-                                )}
-                              </div>
-                            )}
-                            {service.price && (
-                              <span className="text-xl sm:text-2xl font-black text-slate-900">₹{service.price}</span>
-                            )}
+                      <div className="mt-4 sm:mt-6">
+                        {/* Quantity Controls */}
+                        {!isInCart(service.id) && (
+                          <div className="inline-flex items-center gap-2 bg-slate-50 rounded-xl px-2 py-1.5 border border-slate-200 mb-4">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                updateQuantity(service.id, getQuantity(service.id) - 1);
+                              }}
+                              disabled={getQuantity(service.id) <= 1}
+                              className="w-6 h-6 flex items-center justify-center bg-white rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-900 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-slate-700 transition-all font-bold text-sm"
+                              title="Decrease quantity"
+                            >
+                              -
+                            </button>
+                            <span className="text-sm font-black text-slate-900 min-w-[1.5rem] text-center">{getQuantity(service.id)}</span>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                updateQuantity(service.id, getQuantity(service.id) + 1);
+                              }}
+                              className="w-6 h-6 flex items-center justify-center bg-white rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-900 hover:text-white transition-all font-bold text-sm"
+                              title="Increase quantity"
+                            >
+                              +
+                            </button>
                           </div>
-
-                          {/* Quantity Controls */}
-                          {!isInCart(service.id) && (
-                            <div className="flex items-center gap-2 bg-slate-50 rounded-xl px-2 py-1.5 border border-slate-200">
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  updateQuantity(service.id, getQuantity(service.id) - 1);
-                                }}
-                                disabled={getQuantity(service.id) <= 1}
-                                className="w-6 h-6 flex items-center justify-center bg-white rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-900 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-slate-700 transition-all font-bold text-sm"
-                                title="Decrease quantity"
-                              >
-                                -
-                              </button>
-                              <span className="text-sm font-black text-slate-900 min-w-[1.5rem] text-center">{getQuantity(service.id)}</span>
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  updateQuantity(service.id, getQuantity(service.id) + 1);
-                                }}
-                                className="w-6 h-6 flex items-center justify-center bg-white rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-900 hover:text-white transition-all font-bold text-sm"
-                                title="Increase quantity"
-                              >
-                                +
-                              </button>
-                            </div>
-                          )}
-                        </div>
+                        )}
 
                         <button
                           onClick={(e) => {
@@ -331,8 +333,8 @@ const CategoryDetailsPage: React.FC = () => {
                           }}
                           disabled={isInCart(service.id)}
                           className={`w-full px-6 py-3 sm:px-8 sm:py-4 font-black text-[10px] sm:text-xs rounded-2xl transition-all shadow-xl active:scale-95 ${isInCart(service.id)
-                              ? 'bg-emerald-600 text-white cursor-not-allowed'
-                              : 'bg-slate-900 text-white hover:bg-indigo-600'
+                            ? 'bg-emerald-600 text-white cursor-not-allowed'
+                            : 'bg-slate-900 text-white hover:bg-indigo-600'
                             }`}
                         >
                           {isInCart(service.id) ? '✓ Added to Cart' : 'Add to Cart'}
@@ -369,7 +371,7 @@ const CategoryDetailsPage: React.FC = () => {
           )}
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 
