@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 import { useAuth } from '../AuthContext'; // Fix import path to match project structure
 
 const CartPage: React.FC = () => {
-    const { cartItems, removeFromCart, totalPrice, totalActualPrice, totalSavings, loading } = useCart();
+    const { cartItems, removeFromCart, updateQuantity, totalPrice, totalActualPrice, totalSavings, loading } = useCart();
     const navigate = useNavigate();
     const { user } = useAuth();
 
@@ -98,15 +98,40 @@ const CartPage: React.FC = () => {
 
                                         <div className="flex items-end justify-between mt-4">
                                             <div className="flex items-baseline gap-3">
-                                                <span className="text-2xl font-black text-slate-900">₹{item.price.toLocaleString('en-IN')}</span>
+                                                <span className="text-2xl font-black text-slate-900">₹{(item.price * item.quantity).toLocaleString('en-IN')}</span>
                                                 {item.actualPrice && item.actualPrice > item.price && (
                                                     <>
-                                                        <span className="text-sm text-slate-400 line-through font-medium">₹{item.actualPrice.toLocaleString('en-IN')}</span>
+                                                        <span className="text-sm text-slate-400 line-through font-medium">₹{(item.actualPrice * item.quantity).toLocaleString('en-IN')}</span>
                                                         <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg">
                                                             {savingsPercent}% OFF
                                                         </span>
                                                     </>
                                                 )}
+                                            </div>
+
+                                            {/* Quantity Controls */}
+                                            <div className="flex items-center gap-3 bg-slate-50 rounded-xl px-3 py-2 border border-slate-200">
+                                                <button
+                                                    onClick={() => {
+                                                        const newQty = item.quantity - 1;
+                                                        if (newQty >= 1) {
+                                                            updateQuantity(item.subServiceId, newQty);
+                                                        }
+                                                    }}
+                                                    disabled={item.quantity <= 1}
+                                                    className="w-7 h-7 flex items-center justify-center bg-white rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-900 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-slate-700 transition-all font-bold"
+                                                    title="Decrease quantity"
+                                                >
+                                                    -
+                                                </button>
+                                                <span className="text-sm font-black text-slate-900 min-w-[2rem] text-center">{item.quantity}</span>
+                                                <button
+                                                    onClick={() => updateQuantity(item.subServiceId, item.quantity + 1)}
+                                                    className="w-7 h-7 flex items-center justify-center bg-white rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-900 hover:text-white transition-all font-bold"
+                                                    title="Increase quantity"
+                                                >
+                                                    +
+                                                </button>
                                             </div>
                                         </div>
                                     </div>

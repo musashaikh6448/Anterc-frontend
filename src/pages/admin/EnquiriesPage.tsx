@@ -443,11 +443,14 @@ const EnquiriesPage: React.FC = () => {
                             <div>
                               <p className="font-bold text-slate-800">{item.name}</p>
                               <p className="text-xs text-slate-500">{item.category}</p>
+                              {item.quantity && item.quantity > 1 && (
+                                <p className="text-xs text-indigo-600 font-bold mt-0.5">Qty: {item.quantity}</p>
+                              )}
                             </div>
                             <div className="text-right">
-                              <p className="font-bold text-slate-900">₹{item.price}</p>
+                              <p className="font-bold text-slate-900">₹{item.price * (item.quantity || 1)}</p>
                               {item.actualPrice && (
-                                <p className="text-xs text-slate-400 line-through">₹{item.actualPrice}</p>
+                                <p className="text-xs text-slate-400 line-through">₹{item.actualPrice * (item.quantity || 1)}</p>
                               )}
                             </div>
                           </div>

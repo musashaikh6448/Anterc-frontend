@@ -81,7 +81,9 @@ const EnquiryDetailsModal: React.FC<EnquiryDetailsModalProps> = ({
         if (enquiry.items && enquiry.items.length > 0) {
             serviceDetails = `*Services Requested:*\n`;
             enquiry.items.forEach((item: any) => {
-                serviceDetails += `- ${item.name} (${item.category}): ₹${item.price}\n`;
+                const qty = item.quantity || 1;
+                const itemTotal = item.price * qty;
+                serviceDetails += `- ${item.name} (${item.category})${qty > 1 ? ` x${qty}` : ''}: ₹${itemTotal}\n`;
             });
             const total = enquiry.items.reduce((acc: number, item: any) => acc + (item.price * (item.quantity || 1)), 0);
             serviceDetails += `\n*Total Estimated:* ₹${total}`;
@@ -169,7 +171,7 @@ ${enquiry.message || 'No message provided'}
                                     <p className="text-sm font-bold text-slate-900">{enquiry.user?.phone || 'N/A'}</p>
                                 </div>
                             </div>
-                            
+
                         </div>
                     </div>
 
@@ -190,11 +192,14 @@ ${enquiry.message || 'No message provided'}
                                             <div>
                                                 <p className="font-bold text-slate-800">{item.name}</p>
                                                 <p className="text-xs text-slate-500">{item.category}</p>
+                                                {item.quantity && item.quantity > 1 && (
+                                                    <p className="text-xs text-indigo-600 font-bold mt-0.5">Qty: {item.quantity}</p>
+                                                )}
                                             </div>
                                             <div className="text-right">
-                                                <p className="font-bold text-slate-900">₹{item.price}</p>
+                                                <p className="font-bold text-slate-900">₹{item.price * (item.quantity || 1)}</p>
                                                 {item.actualPrice && (
-                                                    <p className="text-xs text-slate-400 line-through">₹{item.actualPrice}</p>
+                                                    <p className="text-xs text-slate-400 line-through">₹{item.actualPrice * (item.quantity || 1)}</p>
                                                 )}
                                             </div>
                                         </div>

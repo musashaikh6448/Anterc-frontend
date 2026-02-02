@@ -217,10 +217,25 @@ const MyEnquiriesPage: React.FC = () => {
                                   {item.actualPrice > item.price && (
                                     <span className="text-[10px] text-slate-400 line-through">₹{item.actualPrice}</span>
                                   )}
+                                  {item.quantity && item.quantity > 1 && (
+                                    <span className="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">
+                                      Qty: {item.quantity}
+                                    </span>
+                                  )}
                                 </div>
                               </div>
                             </div>
                           ))}
+
+                          {/* Total Amount Display */}
+                          <div className="pt-3 mt-2 border-t border-slate-200">
+                            <div className="flex items-center justify-between p-3 bg-indigo-50/50 rounded-xl">
+                              <span className="text-sm font-bold text-slate-700">Total Amount</span>
+                              <span className="text-lg font-black text-indigo-600">
+                                ₹{enquiry.items.reduce((acc: number, item: any) => acc + (item.price * (item.quantity || 1)), 0).toLocaleString('en-IN')}
+                              </span>
+                            </div>
+                          </div>
 
                           {/* Message for multi-service */}
                           {enquiry.message && (

@@ -18,6 +18,7 @@ interface CartContextType {
     cartItems: CartItem[];
     addToCart: (item: CartItem) => Promise<void>;
     removeFromCart: (subServiceId: string) => Promise<void>;
+    updateQuantity: (subServiceId: string, quantity: number) => Promise<void>;
     clearCart: () => Promise<void>;
     loading: boolean;
     totalPrice: number;
@@ -93,6 +94,25 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     };
 
+    const updateQuantity = async (subServiceId: string, quantity: number) => {
+        try {
+            // Validate quantity on frontend
+            if (quantity < 1) {
+                toast.error('Quantity must be at least 1');
+                return;
+            }
+
+            setLoading(true);
+            await axios.put(`/cart/update/${subServiceId}`, { quantity });
+            await fetchCart(); // Refresh cart from server
+            toast.success('Quantity updated');
+        } catch (error: any) {
+            toast.error(error.response?.data?.message || 'Failed to update quantity');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const clearCart = async () => {
         try {
             setLoading(true);
@@ -114,6 +134,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
             cartItems,
             addToCart,
             removeFromCart,
+            updateQuantity,
             clearCart,
             loading,
             totalPrice,
