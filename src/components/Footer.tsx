@@ -19,8 +19,7 @@ const Footer: React.FC = () => {
               </h3>
             </Link>
             <p className="text-sm text-slate-400 leading-relaxed max-w-xs">
-              Top-rated doorstep service for AC and household appliances. Professional work, transparent pricing support.
-            </p>
+Top-Rated Doorstep Service For AC And All Household Appliances Across All Brands, With Professional Electrician, Plumber, And Technician Support And Transparent Pricing.            </p>
             <div className="flex justify-start gap-5">
               <a
                 href="https://www.instagram.com/antarcservices/"

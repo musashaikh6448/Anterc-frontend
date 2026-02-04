@@ -122,11 +122,6 @@ export const TERMS_SECTIONS = [
   },
   {
     id: 3,
-    title: "Warranty Policy",
-    content: "We provide a standard 90-day warranty on labor and a separate warranty on spare parts as specified by the manufacturer. Warranty is void if handled by a third-party technician."
-  },
-  {
-    id: 4,
     title: "Payment Terms",
     content: "Payment is expected upon completion of the service. We accept Cash, UPI, and Digital Wallets. Visiting charges are applicable even if no repair is performed."
   }
