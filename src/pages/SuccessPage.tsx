@@ -43,10 +43,14 @@ const SuccessPage: React.FC = () => {
               <ArrowLeft size={18} strokeWidth={3} />
               Home
             </Link>
-            <button className="flex-1 flex items-center justify-center gap-3 py-4 sm:py-5 bg-white border-2 border-slate-200 text-slate-900 font-black text-base rounded-2xl hover:border-indigo-600 hover:text-indigo-600 transition-all active:scale-[0.98]">
+            <button
+              onClick={() => (window.location.href = "tel:+917385650510")}
+              className="flex-1 flex items-center justify-center gap-3 py-4 sm:py-5 bg-white border-2 border-slate-200 text-slate-900 font-black text-base rounded-2xl hover:border-indigo-600 hover:text-indigo-600 transition-all active:scale-[0.98]"
+            >
               <Phone size={20} strokeWidth={3} />
               Help
             </button>
+
           </div>
 
           <div className="flex items-center justify-center gap-2 text-slate-400 font-bold text-[10px] sm:text-xs uppercase tracking-widest border-t border-slate-200/50 pt-8 leading-none">
