@@ -165,7 +165,7 @@ const CartPage: React.FC = () => {
                                     <span className="text-slate-900 font-bold text-lg">To Pay</span>
                                     <span className="text-3xl font-black text-slate-900">₹{totalPrice.toLocaleString('en-IN')}</span>
                                 </div>
-                                <p className="text-xs text-slate-400 mt-2 text-right">Taxes & fees included</p>
+                               
                             </div>
 
                             <button
