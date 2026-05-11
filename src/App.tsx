@@ -2,7 +2,7 @@ import React from 'react';
 import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Toaster } from 'sonner';
 import { AuthProvider } from './AuthContext';
-import { CartProvider } from './context/CartContext';
+import { CartProvider, useCart } from './context/CartContext';
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 
 // Components
@@ -10,6 +10,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import NavigationLoader from './components/NavigationLoader';
 import ScrollToTop from './components/ScrollToTop';
+import CartStickyFooter from './components/CartStickyFooter';
 
 // Pages
 import HomePage from './pages/HomePage';
@@ -57,7 +58,12 @@ const AnimatedRoutes = () => {
 const AppLayoutContent = () => {
   const location = useLocation();
   const { theme } = useTheme();
+  const { cartItems } = useCart();
   const isAdminPath = location.pathname.startsWith('/admin');
+
+  // Check if we're on a page where the cart footer will show
+  const showCartFooter = !isAdminPath && cartItems.length > 0 && 
+    location.pathname !== '/cart' && location.pathname !== '/checkout';
 
   return (
     <div className="flex flex-col min-h-screen relative bg-[#fcfdfe] max-w-[100vw] overflow-x-hidden">
@@ -71,12 +77,13 @@ const AppLayoutContent = () => {
       </main>
 
       {!isAdminPath && <Footer />}
+      {!isAdminPath && <CartStickyFooter />}
 
       {/* Mobile Floating Action Button - Only for users, not admin */}
       <Routes>
         <Route path="/admin/*" element={null} />
         <Route path="*" element={
-          <div className="fixed bottom-6 right-6 2xl:hidden z-40">
+          <div className={`fixed right-6 2xl:hidden z-40 transition-all duration-300 ${showCartFooter ? 'bottom-28' : 'bottom-6'}`}>
             <a
               href="tel:+917385650510"
               className="text-white w-14 h-14 rounded-2xl shadow-2xl flex items-center justify-center transition-all border border-white/10"

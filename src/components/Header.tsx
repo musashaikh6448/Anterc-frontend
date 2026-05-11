@@ -157,10 +157,10 @@ const Header: React.FC = () => {
               </Link>
 
               {user ? (
-                <div className="relative hidden lg:block">
+                <div className="relative">
                   <button
                     onClick={() => setIsProfileOpen(!isProfileOpen)}
-                    className="flex items-center gap-2 px-3 py-2 bg-slate-50 rounded-xl border border-slate-100 transition-all"
+                    className="flex items-center gap-1 sm:gap-2 p-1 sm:px-3 sm:py-2 bg-slate-50 rounded-xl border border-slate-100 transition-all"
                     onMouseEnter={(e) => {
                       const primary = theme?.colors?.primary || '#4f46e5';
                       e.currentTarget.style.borderColor = `${primary}40`;
@@ -175,8 +175,8 @@ const Header: React.FC = () => {
                     >
                       {user.name.charAt(0)}
                     </div>
-                    <span className="hidden sm:block text-sm font-bold text-slate-700">{user.name.split(' ')[0]}</span>
-                    <ChevronDown size={14} className={`text-slate-400 transition-transform ${isProfileOpen ? 'rotate-180' : ''}`} />
+                    <span className="hidden lg:block text-sm font-bold text-slate-700">{user.name.split(' ')[0]}</span>
+                    <ChevronDown size={14} className={`hidden lg:block text-slate-400 transition-transform ${isProfileOpen ? 'rotate-180' : ''}`} />
                   </button>
 
                   {isProfileOpen && (
@@ -208,23 +208,43 @@ const Header: React.FC = () => {
                   )}
                 </div>
               ) : (
-                <Link
-                  to="/auth"
-                  className="hidden sm:flex items-center gap-2 px-6 py-3 text-white rounded-xl text-sm font-black uppercase tracking-widest transition-all shadow-lg"
-                  style={{
-                    backgroundColor: theme?.colors?.dark || '#0f172a',
-                    boxShadow: `0 10px 15px -3px ${theme?.colors?.primary || '#4f46e5'}20, 0 4px 6px -2px ${theme?.colors?.primary || '#4f46e5'}10`
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = theme?.colors?.darkHover || theme?.colors?.primary || '#1e293b';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = theme?.colors?.dark || '#0f172a';
-                  }}
-                >
-                  <User size={16} strokeWidth={3} />
-                  Login
-                </Link>
+                <>
+                  {/* Mobile Login Icon */}
+                  <Link
+                    to="/auth"
+                    className="sm:hidden p-2.5 text-slate-500 rounded-xl transition-all active:scale-90"
+                    onMouseEnter={(e) => {
+                      const primary = theme?.colors?.primary || '#4f46e5';
+                      e.currentTarget.style.backgroundColor = `${primary}10`;
+                      e.currentTarget.style.color = primary;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = '';
+                      e.currentTarget.style.color = '';
+                    }}
+                  >
+                    <User size={20} strokeWidth={2.5} />
+                  </Link>
+
+                  {/* Desktop Login Button */}
+                  <Link
+                    to="/auth"
+                    className="hidden sm:flex items-center gap-2 px-6 py-3 text-white rounded-xl text-sm font-black uppercase tracking-widest transition-all shadow-lg"
+                    style={{
+                      backgroundColor: theme?.colors?.dark || '#0f172a',
+                      boxShadow: `0 10px 15px -3px ${theme?.colors?.primary || '#4f46e5'}20, 0 4px 6px -2px ${theme?.colors?.primary || '#4f46e5'}10`
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = theme?.colors?.darkHover || theme?.colors?.primary || '#1e293b';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = theme?.colors?.dark || '#0f172a';
+                    }}
+                  >
+                    <User size={16} strokeWidth={3} />
+                    Login
+                  </Link>
+                </>
               )}
 
               <button
