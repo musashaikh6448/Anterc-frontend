@@ -124,7 +124,22 @@ export const TERMS_SECTIONS = [
     id: 3,
     title: "Payment Terms",
     content: "Payment is expected upon completion of the service. We accept Cash, UPI, and Digital Wallets. Visiting charges are applicable even if no repair is performed."
-  }
+  },
+  {
+  id: 4,
+  title: "Direct Technician Contact Disclaimer",
+  content: "If a customer directly contacts or calls a technician/service person without booking through Antarc Services, then Antarc Services will not be responsible for any damage, loss, fraud, misconduct, or issue that may occur during or after the service. In such cases, the customer will be solely responsible for their own dealings and safety."
+},
+{
+  id: 5,
+  title: "Customer Availability Requirement",
+  content: "When the technician arrives at the service location, the customer or the designated contact person must be available on-site. If no responsible person is present during the service visit, any complaints or issues raised later regarding the service may not be considered valid by Antarc Services."
+},
+{
+  id: 6,
+  title: "T & C Apply",
+  content: "All services provided by Antarc Services are subject to company policies and Terms & Conditions. By booking or using our services, the customer agrees to follow all applicable terms mentioned by Antarc Services."
+}
 ];
 
 export const MOCK_ENQUIRIES = [

@@ -1,15 +1,24 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { X } from 'lucide-react';
 
 const CartStickyFooter: React.FC = () => {
   const { cartItems, totalPrice, totalActualPrice } = useCart();
   const { theme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
+  const [isVisible, setIsVisible] = useState(true);
 
-  if (cartItems.length === 0) return null;
+  // Re-show footer if cart items change
+  useEffect(() => {
+    if (cartItems.length > 0) {
+      setIsVisible(true);
+    }
+  }, [cartItems.length]);
+
+  if (cartItems.length === 0 || !isVisible) return null;
 
   // Don't show on cart, checkout, or admin pages
   if (
@@ -33,16 +42,25 @@ const CartStickyFooter: React.FC = () => {
           <span className="text-xs font-bold text-slate-500">{cartItems.length} item{cartItems.length > 1 ? 's' : ''} added</span>
         </div>
         
-        <button
-          onClick={() => navigate('/cart')}
-          className="px-6 py-3 rounded-xl text-white text-sm font-black uppercase tracking-widest transition-all shadow-lg active:scale-95"
-          style={{
-            backgroundColor: theme?.colors?.primary || '#8b5cf6', // Matching the purple from image
-            boxShadow: `0 10px 15px -3px ${theme?.colors?.primary || '#8b5cf6'}40`
-          }}
-        >
-          View Cart
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => navigate('/cart')}
+            className="px-6 py-3 rounded-xl text-white text-sm font-black uppercase tracking-widest transition-all shadow-lg active:scale-95"
+            style={{
+              backgroundColor: theme?.colors?.primary || '#8b5cf6', // Matching the purple from image
+              boxShadow: `0 10px 15px -3px ${theme?.colors?.primary || '#8b5cf6'}40`
+            }}
+          >
+            View Cart
+          </button>
+          <button 
+            onClick={() => setIsVisible(false)}
+            className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors flex-shrink-0"
+            aria-label="Close cart summary"
+          >
+            <X size={20} />
+          </button>
+        </div>
       </div>
     </div>
   );
