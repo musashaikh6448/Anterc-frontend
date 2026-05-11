@@ -161,9 +161,12 @@ const CartPage: React.FC = () => {
                                     </div>
                                 )}
                                 <div className="h-px bg-slate-100 my-4"></div>
-                                <div className="flex justify-between items-end">
+                                <div className="flex justify-between items-center">
                                     <span className="text-slate-900 font-bold text-lg">To Pay</span>
-                                    <span className="text-3xl font-black text-slate-900">₹{totalPrice.toLocaleString('en-IN')}</span>
+                                    <div className="flex flex-col items-end">
+                                        <span className="text-3xl font-black text-slate-900">₹{totalPrice.toLocaleString('en-IN')}</span>
+                                        <span className="text-xs text-slate-400 mt-1 font-medium">Taxes & fees included</span>
+                                    </div>
                                 </div>
                                
                             </div>
