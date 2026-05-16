@@ -149,7 +149,7 @@ export const MOCK_ENQUIRIES = [
     status: 'Technician Assigned',
     brand: 'Voltas',
     date: '24 May, 2024',
-    location: 'Near New Mondha, VIP Road, Nanded'
+    location: '4-6-256-7 Near Badi Dargah Gadipura Nanded - 431604 Maharashtra'
   },
   {
     id: 'EC-55102-REQ',

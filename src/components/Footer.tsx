@@ -71,16 +71,16 @@ Top-Rated Doorstep Service For AC And All Household Appliances Across All Brands
             </h4>
             <ul className="space-y-6 text-sm font-bold">
               <li className="flex items-center gap-3">
-                <Phone size={18} className="text-indigo-400" />
+                <Phone size={18} className="text-indigo-400 shrink-0" />
                 <span>+91 7385650510</span>
               </li>
               <li className="flex items-center gap-3">
-                <Mail size={18} className="text-indigo-400" />
+                <Mail size={18} className="text-indigo-400 shrink-0" />
                 <span>antarcservices@gmail.com</span>
               </li>
-              <li className="flex items-center gap-3">
-                <MapPin size={18} className="text-indigo-400" />
-                <span>Near New Mondha, VIP Road, Nanded</span>
+              <li className="flex items-start gap-3">
+                <MapPin size={18} className="text-indigo-400 shrink-0 mt-0.5" />
+                <span>4-6-256-7 Near Badi Dargah Gadipura Nanded - 431604 Maharashtra</span>
               </li>
             </ul>
           </div>

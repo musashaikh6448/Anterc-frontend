@@ -70,7 +70,7 @@ const ContactPage: React.FC = () => {
                 </div>
                 <div className="space-y-1">
                   <h4 className="font-black text-slate-900">Office Address</h4>
-                  <p className="text-slate-500 font-medium">Near New Mondha, VIP Road, Nanded,<br />Maharashtra 431602</p>
+                  <p className="text-slate-500 font-medium">4-6-256-7 Near Badi Dargah Gadipura Nanded - 431604 Maharashtra</p>
                 </div>
               </div>
               <div className="flex gap-6 items-start">

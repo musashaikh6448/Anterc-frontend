@@ -118,7 +118,7 @@ const HomePage: React.FC = () => {
   return (
     <div className="pb-24 sm:pb-32 overflow-hidden w-full">
       {/* Hero Section */}
-      <section className="pt-4 sm:pt-8 md:pt-12 px-4 sm:px-6">
+      <section className="pt-10 sm:pt-10 md:pt-12 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto">
           <BannerCarousel />
         </div>
